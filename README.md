@@ -1,3 +1,3 @@
-# GeoFeeder
+# Catasto API
 
-Repo for georoma geofeeder
+Repo for georoma catasto api

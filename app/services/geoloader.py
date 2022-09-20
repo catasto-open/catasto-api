@@ -60,7 +60,7 @@ class GeoloaderService(AppService):
             aws_access_key_id="e5NDexDVLlhTIvCd",
             aws_secret_access_key="xjnSuoApCzXQP4XLVFecULO4KoqOAduv",
             aws_session_token=None,
-            region_name="geofeeder",
+            region_name="europe",
             botocore_session=None,
             profile_name=None
         )

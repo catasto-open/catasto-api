@@ -6,7 +6,6 @@ from starlette.middleware.cors import CORSMiddleware
 
 from app.config.config import configuration as cfg
 from app.config.logging import create_logger
-from app.routers import geoloader as geoloader_router
 from app.utils.app_exceptions import AppExceptionCase, app_exception_handler
 from app.utils.request_exceptions import (
     http_exception_handler,
@@ -16,7 +15,7 @@ from app.utils.request_exceptions import (
 
 def create_app() -> FastAPI:
 
-    app = FastAPI(title="GeoFeeder", root_path=cfg.ROOT_PATH)
+    app = FastAPI(title="Catasto-API", root_path=cfg.ROOT_PATH)
 
     # Set all CORS enabled origins
     app.add_middleware(
@@ -39,7 +38,7 @@ def create_app() -> FastAPI:
     async def custom_app_exception_handler(request, e):
         return await app_exception_handler(request, e)
 
-    geoloader = FastAPI(title="GeoFeeder Workflow API")
+    catastoloader = FastAPI(title="Catasto API")
 
     @geoloader.exception_handler(StarletteHTTPException)
     async def search_custom_http_exception_handler(request, e):
@@ -53,8 +52,8 @@ def create_app() -> FastAPI:
     async def search_custom_app_exception_handler(request, e):
         return await app_exception_handler(request, e)
 
-    geoloader.include_router(geoloader_router.router)
-    app.mount("/api/v1", geoloader)
+    # catasto.include_router(geoloader_router.router)
+    # app.mount("/api/v1", geoloader)
 
     app.logger = create_logger(name="app.main")
 

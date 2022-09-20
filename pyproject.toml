@@ -1,22 +1,16 @@
 [tool.poetry]
-name = "geofeeder"
+name = "catasto-api"
 version = "0.1.0"
-description = ""
-authors = ["Francesco Bartoli <francesco.bartoli@geobeyond.it>"]
+description = "Printing stuff"
+authors = ["Antonio Cerciello <antonio.cerciello@geobeyond.it>"]
 
 [tool.poetry.dependencies]
 python = "^3.8"
-fastflows = "^0.1.0"
 fief-client = {extras = ["fastapi"], version = "^0.14.1"}
 aiofiles = "^22.1.0"
 python-multipart = "^0.0.5"
 httpx-oauth = "^0.10.1"
-miniopy-async = "^1.9"
-GDAL = "^3.5.1"
-geopandas = "^0.11.1"
-Fiona = {extras = ["s3"], version = "^1.8.21"}
 fastapi-oidc = "^0.0.9"
-OWSLib = "^0.27.2"
 
 [tool.poetry.dev-dependencies]
 ipython = "^8.4.0"

@@ -32,13 +32,6 @@ class DevConfig(GlobalConfig):
 
     ROOT_PATH: Optional[str] = Field(None, env="DEV_ROOT_PATH")
     LOG_LEVEL: Optional[str] = Field(None, env="DEV_LOG_LEVEL")
-    LOCAL_STORAGE_BASEPATH: Optional[str] = Field(
-        None,
-        env="DEV_LOCAL_STORAGE_BASEPATH"
-    )
-    MINIO_BASEURL: Optional[str] = Field(None, env="DEV_MINIO_BASEURL")
-    MINIO_ACCESS_KEY: Optional[str] = Field(None, env="DEV_MINIO_ACCESS_KEY")
-    MINIO_SECRET_KEY: Optional[str] = Field(None, env="DEV_MINIO_SECRET_KEY")
     OPENAM_CLIENT_ID: Optional[str] = Field(
         None,
         env="DEV_OPENAM_CLIENT_ID",
@@ -66,9 +59,6 @@ class ProdConfig(GlobalConfig):
         None,
         env="PROD_LOCAL_STORAGE_BASEPATH"
     )
-    MINIO_BASEURL: Optional[str] = Field(None, env="PROD_MINIO_BASEURL")
-    MINIO_ACCESS_KEY: Optional[str] = Field(None, env="PROD_MINIO_ACCESS_KEY")
-    MINIO_SECRET_KEY: Optional[str] = Field(None, env="PROD_MINIO_SECRET_KEY")
     OPENAM_CLIENT_ID: Optional[str] = Field(
         None,
         env="PROD_OPENAM_CLIENT_ID",
