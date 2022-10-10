@@ -11,6 +11,15 @@ aiofiles = "^22.1.0"
 python-multipart = "^0.0.5"
 httpx-oauth = "^0.10.1"
 fastapi-oidc = "^0.0.9"
+loguru = "^0.6.0"
+uvicorn = "^0.18.3"
+pydantic = {extras = ["dotenv"], version = "^1.10.2"}
+pdfkit = "^1.0.0"
+databases = {extras = ["asyncpg"], version = "^0.6.1"}
+SQLAlchemy = "^1.4.41"
+psycopg2-binary = "^2.9.3"
+Jinja2 = "^3.1.2"
+fastapi-third-party-auth = "^0.1.2"
 
 [tool.poetry.dev-dependencies]
 ipython = "^8.4.0"

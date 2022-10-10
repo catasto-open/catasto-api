@@ -1,4 +1,5 @@
 import uvicorn
+
 from fastapi import FastAPI
 from fastapi.exceptions import RequestValidationError
 from starlette.exceptions import HTTPException as StarletteHTTPException
@@ -6,6 +7,7 @@ from starlette.middleware.cors import CORSMiddleware
 
 from app.config.config import configuration as cfg
 from app.config.logging import create_logger
+from app.routers import catastoprints
 from app.utils.app_exceptions import AppExceptionCase, app_exception_handler
 from app.utils.request_exceptions import (
     http_exception_handler,
@@ -38,22 +40,10 @@ def create_app() -> FastAPI:
     async def custom_app_exception_handler(request, e):
         return await app_exception_handler(request, e)
 
-    catastoloader = FastAPI(title="Catasto API")
+    catastoapi = FastAPI(title="Catasto API")
 
-    @geoloader.exception_handler(StarletteHTTPException)
-    async def search_custom_http_exception_handler(request, e):
-        return await http_exception_handler(request, e)
-
-    @geoloader.exception_handler(RequestValidationError)
-    async def search_custom_validation_exception_handler(request, e):
-        return await request_validation_exception_handler(request, e)
-
-    @geoloader.exception_handler(AppExceptionCase)
-    async def search_custom_app_exception_handler(request, e):
-        return await app_exception_handler(request, e)
-
-    # catasto.include_router(geoloader_router.router)
-    # app.mount("/api/v1", geoloader)
+    catastoapi.include_router(catastoprints.router)
+    app.mount("/siscat/api/v1", catastoapi)
 
     app.logger = create_logger(name="app.main")
 

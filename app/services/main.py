@@ -1,27 +1,14 @@
-from app.config.client import MinioClient, LocalStorageClient
+from sqlalchemy.orm import Session
 
 
-class StorageClientSessionContext:
-    def __init__(
-        self, 
-        client: MinioClient,
-        local_client: LocalStorageClient
-    ):
-        self.client = client
-        self.local_client = local_client
+class DBSessionContext(object):
+    def __init__(self, db: Session):
+        self.db = db
 
 
-class LocalStorageClientSessionContext:
-    def __init__(
-        self, 
-        client: LocalStorageClient
-    ):
-        self.client = client
-
-
-class AppService(StorageClientSessionContext):
+class AppService(DBSessionContext):
     pass
 
 
-class AppValidation(LocalStorageClientSessionContext):
+class AppQuery(DBSessionContext):
     pass

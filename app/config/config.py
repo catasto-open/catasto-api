@@ -48,6 +48,22 @@ class DevConfig(GlobalConfig):
         None,
         env="DEV_OPENAM_OIDC_WELL_KNOWN_CONTEXT",
     )
+    SISCAT_DB_SERVER_HOST: Optional[str] = Field(
+        None, env="DEV_SISCAT_DB_SERVER_HOST"
+    )
+    SISCAT_DB_SERVER_PORT: Optional[str] = Field(
+        None, env="DEV_SISCAT_DB_SERVER_PORT"
+    )
+    SISCAT_DB_NAME: Optional[str] = Field(
+        None, env="DEV_SISCAT_DB_NAME"
+    )
+    SISCAT_DB_USER: Optional[str] = Field(
+        None, env="DEV_SISCAT_DB_USER"
+    )
+    SISCAT_DB_PASSWORD: Optional[str] = Field(
+        None, env="DEV_SISCAT_DB_PASSWORD"
+    )
+
 
 
 class ProdConfig(GlobalConfig):
@@ -74,6 +90,21 @@ class ProdConfig(GlobalConfig):
     OPENAM_OIDC_WELL_KNOWN_CONTEXT: Optional[str] = Field(
         None,
         env="PROD_OPENAM_OIDC_WELL_KNOWN_CONTEXT",
+    )
+    SISCAT_DB_SERVER_HOST: Optional[str] = Field(
+        None, env="PROD_SISCAT_DB_SERVER_HOST"
+    )
+    SISCAT_DB_SERVER_PORT: Optional[str] = Field(
+        None, env="PROD_SISCAT_DB_SERVER_PORT"
+    )
+    SISCAT_DB_NAME: Optional[str] = Field(
+        None, env="PROD_SISCAT_DB_NAME"
+    )
+    SISCAT_DB_USER: Optional[str] = Field(
+        None, env="PROD_SISCAT_DB_USER"
+    )
+    SISCAT_DB_PASSWORD: Optional[str] = Field(
+        None, env="PROD_SISCAT_DB_PASSWORD"
     )
 
 

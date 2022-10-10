@@ -29,20 +29,14 @@ async def app_exception_handler(request: Request, exc: AppExceptionCase):
 
 
 class AppException:
-    class ShapefileNotValid(AppExceptionCase):
+    class GetPersonaByCodiceFiscale(AppExceptionCase):
         def __init__(self, context: Dict[Any, Any]):
             """
-            Shapefile is not valid
+            Persona Fisica not found
             """
-            status_code = 422
-            error = "The dataset is not a valid Shapefile"
-            AppExceptionCase.__init__(self, status_code, error, context)
+            status_code = 404
+            context = "Persona Fisica not found"
+            AppExceptionCase.__init__(self, status_code, context)
 
-    class GeopackageNotValid(AppExceptionCase):
-        def __init__(self, context: Dict[Any, Any]):
-            """
-            Geopackage is not valid
-            """
-            status_code = 422
-            error = "The dataset is not a valid Geopackage"
-            AppExceptionCase.__init__(self, status_code, error, context)
+
+

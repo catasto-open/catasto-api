@@ -1,0 +1,130 @@
+<html>
+<head>
+    <title>Lista Persone Fisiche</title>
+    <style>
+        body {
+            font-size: 0.9em;
+            font-family: Arial,sans-serif;
+        }
+        .styled-table {
+            border-collapse: collapse;
+            margin: 25px 0;
+            font-size: 1em;
+            font-family: sans-serif;
+            min-width: 400px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+        }
+        .styled-table thead tr {
+            background-color: #b40802;
+            color: #ffffff;
+            text-align: left;
+        }
+        .styled-table th,
+        .styled-table td {
+            padding: 12px 15px;
+        }
+        .second_row {
+            background-color: #fcc5a0;
+            border: 1px solid #b40802;
+            color: #000000;
+        }
+        .label_colspanned {
+            background-color: #fcc5a0;
+            color: #000000;
+            font-size: 1em;
+            font-weight: bold;
+        }
+        .value_colspanned {
+            font-size: 0.9em;
+        }
+        .styled-table tbody tr {
+            border-bottom: 1px solid #dddddd;
+        }
+
+        .styled-table tbody td {
+            border-left: 1px solid #dddddd;
+            border-right: 1px solid #dddddd;
+        }
+
+        .styled-table tbody tr:nth-of-type(even) {
+            background-color: #f3f3f3;
+        }
+
+        .styled-table tbody tr:last-of-type {
+            border-bottom: 2px solid #690000;
+        }
+
+        h1 {
+        margin: 0;
+        padding: 0;
+        font-family: 'Times New Roman', Times, serif;
+        font-size: 3em;
+        padding: 10px 0;
+        font-weight: 200;
+        }
+
+        .header {
+        width: 100%;
+        padding:30px 0;
+        text-align: center;
+        background: #b40802;
+        color: white;
+        }
+
+
+        .btn-bgstroke {
+        font-size: 20px;
+        display: inline-block;
+        border: 1px solid white;
+        padding: 10px 20px;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: 300;
+        margin-top: 20px; 
+        }
+
+        .btn-bgstroke:hover {
+        background-color: white;
+        color: #33cccc;
+        }
+
+        thead { display: table-header-group; }
+        tfoot { display: table-row-group; }
+        tr { page-break-inside: avoid; }
+    </style>
+</head>
+<body>
+    <section class="header">
+        <h1>SISCAT
+        </h1>
+    </section>
+    <h2>Lista Persone Fisiche</h2>
+
+    <table class="styled-table">
+        <thead>
+            <tr >
+                <th style="width: 15%;">Cognome</th>
+                <th style="width: 15%;">Nome</th>
+                <th style="width: 5%;">Genere</th>
+                <th style="width: 10%;">Data di nascita</th>
+                <th style="width: 30%;">Luogo di nascita</th>
+                <th style="width: 15%;">Codice fiscale</th>
+                <th style="width: 10%;">Codice soggetto</th>
+            </tr>
+        </thead>
+        {% for dict_item in items %}
+        <tr>
+            <td>{{ dict_item['cognome'] }}</td>
+            <td>{{ dict_item['nome'] }}</td>
+            <td>{{ dict_item['genere'] }}</td>
+            <td>{{ dict_item['datadinascita'] }}</td>
+            <td>{{ dict_item['comune'] }}</td>
+            <td>{{ dict_item['codfiscale'] }}</td>
+            <td>{{ dict_item['soggetto'] }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+</body>
+
+</html>

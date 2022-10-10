@@ -5,8 +5,11 @@ FROM tiangolo/uvicorn-gunicorn-fastapi:python3.8-slim
 
 # Install packages and dependencies
 RUN apt-get update \
-    && apt-get install gcc git curl -y \
+    && apt-get install gcc git curl libxrender1 -y \
     && apt-get clean
+
+# Install wkhtmltopdf
+COPY /wkhtmltopdf/wkhtmltox/bin/ /usr/bin/
 
 # Install Poetry
 RUN pip install --upgrade pip
