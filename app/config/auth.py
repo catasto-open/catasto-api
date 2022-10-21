@@ -12,11 +12,11 @@ from app.config.config import configuration as cfg
 
 
 OIDC_config = {
-    "client_id": "formaromae",
+    "client_id": cfg.OPENAM_CLIENT_ID,
     # Audience can be omitted in which case the aud value defaults to client_id
     # "audience": "http://localhost:5000/api/v1",
-    "base_authorization_server_uri": "https://ssopre.comune.roma.it:443/ssoservice/oauth2/realms/root/realms/public",
-    "issuer": "https://ssopre.comune.roma.it:443/ssoservice/oauth2/realms/root/realms/public",
+    "base_authorization_server_uri": cfg.OPENAM_OIDC_BASE_URL,
+    "issuer": cfg.OPENAM_OIDC_BASE_URL,
     "signature_cache_ttl": 3600,
 }
 
@@ -62,10 +62,13 @@ class CustomAuth(Auth):
             IDToken validation errors
         """
 
+        print('Something')
+
         id_token = self.required(
             security_scopes,
             authorization_credentials
         )
+
         if id_token is None:
             raise HTTPException(status.HTTP_401_UNAUTHORIZED)
         else:
@@ -86,7 +89,7 @@ class CustomAuth(Auth):
 
 auth = CustomAuth(
     openid_connect_url=f"{cfg.OPENAM_OIDC_BASE_URL}{cfg.OPENAM_OIDC_WELL_KNOWN_CONTEXT}",  # noqa
-    openid_userinfo_url="https://ssopre.comune.roma.it/ssoservice/oauth2/realms/root/realms/public/userinfo",
+    openid_userinfo_url=cfg.OPENAM_OIDC_USERINFO_URL,
     # issuer=f"{cfg.OPENAM_OIDC_BASE_URL}",
     client_id=cfg.OPENAM_CLIENT_ID,  # optional, verification only
     scopes=["openid", "tipo_utente"],  # optional, verification only

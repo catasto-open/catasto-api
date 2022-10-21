@@ -4,11 +4,14 @@ from app.services.personagiuridicaservice import PersonaGiuridicaService
 from app.services.immobileservice import ImmobileService
 from typing import Optional
 from fastapi import APIRouter, Depends, Query, HTTPException, Security
-from app.services.pdfformatter import generate_print
+from app.services.pdfformatter import generate_print_pdf
+from app.services.csvformatter import generate_print_csv
 from app.config.database import get_db
 from app.config.auth import OpenAMIDToken, auth
 from fastapi.responses import FileResponse
 from datetime import date
+from enum import Enum
+import re
 
 router = APIRouter(
     prefix="/catasto",
@@ -16,16 +19,19 @@ router = APIRouter(
     responses={404: {"description": "Not found"}},
 )
 
+
 @router.get("/status/")
 async def healthcheck():
     return {"status": "healthy"}
 
 @router.get("/auth/")
 async def protectedURL(user: OpenAMIDToken = Security(auth.authorized)):
-    return {"status": "healthy"}
+    print(user)
+    return {"status": "Logged in"}
 
 @router.get("/stampa/visura", response_class=FileResponse)
 async def visura(
+    utente: OpenAMIDToken = Security(auth.authorized),
     comune: Optional[str] = Query(
         "H501",
         title="Comune",
@@ -59,7 +65,7 @@ async def visura(
         title="Codice Immobile",
         description="Ricerca per codice immobile"
     ),
-    codicesoggetto: Optional[int] = Query(
+    codicesoggetto: Optional[str] = Query(
         None,
         title="Codice Soggetto",
         description="Ricerca per codice soggetto"
@@ -71,6 +77,8 @@ async def visura(
     ),
     db: get_db = Depends()):
 
+        username = utente.sub
+
         if codiceimmobile:
             result = VisuraService(db).get_visura_by_codiceimmobile(flagricercastorica, comune, codiceimmobile, tipoimmobile)
         elif codicesoggetto:
@@ -79,10 +87,9 @@ async def visura(
             raise HTTPException(
                     status_code=422, 
                     detail="Dati input non validi")
-        generate_print("Visura", result)
         if result:
             try:
-                return generate_print("Visura", result)
+                return generate_print_pdf("Visura", result, username)
             except BaseException:
                 raise HTTPException(
                     status_code=500, 
@@ -94,7 +101,8 @@ async def visura(
 
 @router.get("/stampa/ricerca/immobili", response_class=FileResponse)
 async def immobili(
-    codicesoggetto: Optional[int] = Query(
+    utente: OpenAMIDToken = Security(auth.authorized),
+    codicesoggetto: Optional[str] = Query(
         None,
         title="Codice Soggetto",
         description="Ricerca per codice soggetto"
@@ -163,12 +171,26 @@ async def immobili(
         title="Flag ricerca storica",
         description="Ricerca nei dati storici"
     ),
+    format: Optional[str] = Query(
+        "pdf",
+        title="Formato export",
+        description="Il formato del file output, indicare pdf o csv",
+        max_length=3
+    ),
     db: get_db = Depends()):
+
+    username = utente.sub
 
     if codiceimmobile:
         result = ImmobileService(db).get_immobili_by_codiceimmobile(flagricercastorica, comune, codiceimmobile, tipoimmobile)
     elif codicesoggetto:
-        result = ImmobileService(db).get_immobili_by_codice_soggetto(flagricercastorica, comune, codicesoggetto, tipoimmobile)
+        try:
+            cs = int(re.findall(r'[0-9]+', codicesoggetto)[0])
+        except:
+            raise HTTPException(
+                status_code=422, 
+                detail="Codice soggetto must be a number")
+        result = ImmobileService(db).get_immobili_by_codice_soggetto(flagricercastorica, comune, cs, tipoimmobile)
     elif foglio and comune and particella:
         result = ImmobileService(db).get_immobili_by_dati_catastali(flagricercastorica, comune, sezione, foglio, particella, tipoimmobile)
     elif comune and toponimo and indirizzo and numerocivico:
@@ -179,12 +201,20 @@ async def immobili(
                 detail="Dati input non validi")
 
     if result:
-        try:
-            return generate_print("Immobili", result)
-        except BaseException:
-            raise HTTPException(
-                status_code=500, 
-                detail="Template non trovato")
+        if(format=='pdf'):
+            try:
+                return generate_print_pdf("Immobili", result, username)
+            except BaseException:
+                raise HTTPException(
+                    status_code=500, 
+                    detail="Template non trovato")
+        else:
+            try:
+                return generate_print_csv("Immobili", result, username)
+            except BaseException:
+                raise HTTPException(
+                    status_code=500, 
+                    detail="Errore generazione CSV")
     else:
         raise HTTPException(
             status_code=404, 
@@ -193,6 +223,7 @@ async def immobili(
 
 @router.get("/stampa/ricerca/persone_fisiche", response_class=FileResponse)
 async def persone_fisiche(
+    utente: OpenAMIDToken = Security(auth.authorized),
     comune: Optional[str] = Query(
         "H501",
         title="Comune",
@@ -239,7 +270,15 @@ async def persone_fisiche(
         regex="^[a-zA-Z0-9_]*$",
         max_length=4
     ),
+    format: Optional[str] = Query(
+        "pdf",
+        title="Formato export",
+        description="Il formato del file output, indicare pdf o csv",
+        max_length=3
+    ),
     db: get_db = Depends()):
+
+    username = utente.sub
 
     if codicesoggetto:
         result = PersonaFisicaService(db).get_persona_by_codice_soggetto(comune, codicesoggetto)
@@ -253,13 +292,20 @@ async def persone_fisiche(
                 detail="Dati input non validi")
 
     if result:
-        return generate_print("Persone Fisiche", result)
-        try:
-            return generate_print("Persone Fisiche", result)
-        except BaseException:
-            raise HTTPException(
-                status_code=500, 
-                detail="Template non trovato")
+        if(format=='pdf'):
+            try:
+                return generate_print_pdf("Persone Fisiche", result, username)
+            except BaseException:
+                raise HTTPException(
+                    status_code=500, 
+                    detail="Template non trovato")
+        else:
+            try:
+                return generate_print_csv("Persone Fisiche", result, username)
+            except BaseException:
+                raise HTTPException(
+                    status_code=500, 
+                    detail="Errore generazione CSV")
     else:
         raise HTTPException(
             status_code=404, 
@@ -268,6 +314,7 @@ async def persone_fisiche(
 
 @router.get("/stampa/ricerca/persone_giuridiche", response_class=FileResponse)
 async def persone_giuridiche(
+    utente: OpenAMIDToken = Security(auth.authorized),
     comune: Optional[str] = Query(
         "H501",
         title="Comune",
@@ -294,7 +341,15 @@ async def persone_giuridiche(
         regex="^[a-zA-Z0-9_\x20]*$",
         max_length=128
     ),
+    format: Optional[str] = Query(
+        "pdf",
+        title="Formato export",
+        description="Il formato del file output, indicare pdf o csv",
+        max_length=3
+    ),
     db: get_db = Depends()):
+
+    username = utente.sub
 
     if codicesoggetto:
         result = PersonaGiuridicaService(db).get_persona_by_codice_soggetto(comune, codicesoggetto)
@@ -307,16 +362,21 @@ async def persone_giuridiche(
                 status_code=422, 
                 detail="Dati input non validi")
 
-    print(result)
-
     if result:
-        return generate_print("Persone Giuridiche", result)
-        try:
-            return generate_print("Persone Giuridiche", result)
-        except BaseException:
-            raise HTTPException(
-                status_code=500, 
-                detail="Template non trovato")
+        if(format=='pdf'):
+            try:
+                return generate_print_pdf("Persone Giuridiche", result, username)
+            except BaseException:
+                raise HTTPException(
+                    status_code=500, 
+                    detail="Template non trovato")
+        else:
+            try:
+                return generate_print_csv("Persone Giuridiche", result, username)
+            except BaseException:
+                raise HTTPException(
+                    status_code=500, 
+                    detail="Errore generazione CSV")
     else:
         raise HTTPException(
             status_code=404, 

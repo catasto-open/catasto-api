@@ -288,7 +288,11 @@ class VisuraView:
             T.SEZIONE,
             T.IMMOBILE,
             T.TIPO_IMM AS TIPO_IMMOBILE,
-            BTRIM((F.COGNOME::TEXT || ' '::TEXT) || F.NOME::TEXT) || COALESCE(' NATO A ' || C.COMUNE, '') || COALESCE(' IL ' || TO_DATE(NULLIF(BTRIM(F.DATA::TEXT), ''::TEXT), 'DDMMYYYY'::TEXT), '') AS NOMINATIVO,
+            CASE
+                WHEN F.SESSO = '1'
+                THEN BTRIM((F.COGNOME::TEXT || ' '::TEXT) || F.NOME::TEXT) || COALESCE(' NATO A ' || C.COMUNE, '') || COALESCE(' IL ' || TO_CHAR(TO_DATE(NULLIF(BTRIM(F.DATA::TEXT), ''::TEXT), 'DDMMYYYY'::TEXT),'DD/MM/YYYY'), '')
+                ELSE BTRIM((F.COGNOME::TEXT || ' '::TEXT) || F.NOME::TEXT) || COALESCE(' NATA A ' || C.COMUNE, '') || COALESCE(' IL ' || TO_CHAR(TO_DATE(NULLIF(BTRIM(F.DATA::TEXT), ''::TEXT), 'DDMMYYYY'::TEXT),'DD/MM/YYYY'), '')
+            END AS NOMINATIVO,
             F.CODFISCALE AS CODICE_FISCALE,
             COALESCE(TT.TITOLO, T.TITOLO) AS TITOLO,
             CASE

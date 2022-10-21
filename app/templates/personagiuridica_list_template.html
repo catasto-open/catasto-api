@@ -1,6 +1,6 @@
 <html>
 <head>
-    <title>Lista Persone Giuridiche</title>
+    <title>Visura</title>
     <style>
         body {
             font-size: 0.9em;
@@ -12,63 +12,68 @@
             font-size: 1em;
             font-family: sans-serif;
             min-width: 400px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
         }
         .styled-table thead tr {
-            background-color: #b40802;
-            color: #ffffff;
+            background-color: #dbd8d8;
+            color: #000000;
             text-align: left;
+        }
+        .styled-table-head td {
+            background-color: #ffffff;
+            color: #000000;
+            text-align: left;
+            font-weight: bold;
         }
         .styled-table th,
         .styled-table td {
             padding: 12px 15px;
+            border: 1px solid #000000;
         }
-        .second_row {
-            background-color: #fcc5a0;
-            border: 1px solid #b40802;
+        .second_row td {
+            background-color: #dbd8d8;
             color: #000000;
         }
         .label_colspanned {
-            background-color: #fcc5a0;
+            background-color: #dbd8d8;
             color: #000000;
             font-size: 1em;
             font-weight: bold;
         }
         .value_colspanned {
+            background-color: #ffffff;
             font-size: 0.9em;
         }
         .styled-table tbody tr {
-            border-bottom: 1px solid #dddddd;
+            border-bottom: 1px solid #000000;
         }
 
         .styled-table tbody td {
-            border-left: 1px solid #dddddd;
-            border-right: 1px solid #dddddd;
+            border: 1px solid #000000;
         }
 
         .styled-table tbody tr:nth-of-type(even) {
-            background-color: #f3f3f3;
+            background-color: #dbd8d8;
         }
 
         .styled-table tbody tr:last-of-type {
-            border-bottom: 2px solid #690000;
-        }
-
-        h1 {
-        margin: 0;
-        padding: 0;
-        font-family: 'Times New Roman', Times, serif;
-        font-size: 3em;
-        padding: 10px 0;
-        font-weight: 200;
+            border-bottom: 2px solid #000000;
         }
 
         .header {
         width: 100%;
         padding:30px 0;
-        text-align: center;
-        background: #b40802;
-        color: white;
+        text-align: left;
+        background: #ffffff;
+        color: #000000;
+        border-bottom: 2px solid #960630;
+        }
+
+        .header2 {
+        width: 100%;
+        padding:2px;
+        text-align: right;
+        background: #ffffff;
+        color: #000000;
         }
 
 
@@ -94,11 +99,10 @@
     </style>
 </head>
 <body>
-    <section class="header">
-        <h1>SISCAT
-        </h1>
+    <section class = "header2">
+        <p>Dati SISCAT alla {{data_stampa}}</p>
     </section>
-    <h2>Lista Persone Giuridiche</h2>
+    <h1>Lista Persone Giuridiche</h1>
 
     <table class="styled-table">
         <thead>

@@ -44,6 +44,10 @@ class DevConfig(GlobalConfig):
         None,
         env="DEV_OPENAM_OIDC_BASE_URL",
     )
+    OPENAM_OIDC_USERINFO_URL: Optional[str] = Field(
+        None,
+        env="DEV_OPENAM_OIDC_USERINFO_URL",
+    )
     OPENAM_OIDC_WELL_KNOWN_CONTEXT: Optional[str] = Field(
         None,
         env="DEV_OPENAM_OIDC_WELL_KNOWN_CONTEXT",
@@ -86,6 +90,10 @@ class ProdConfig(GlobalConfig):
     OPENAM_OIDC_BASE_URL: Optional[str] = Field(
         None,
         env="PROD_OPENAM_OIDC_BASE_URL",
+    )
+    OPENAM_OIDC_USERINFO_URL: Optional[str] = Field(
+        None,
+        env="PROD_OPENAM_OIDC_USERINFO_URL",
     )
     OPENAM_OIDC_WELL_KNOWN_CONTEXT: Optional[str] = Field(
         None,
