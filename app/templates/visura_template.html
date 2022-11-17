@@ -6,9 +6,13 @@
             font-size: 0.9em;
             font-family: Arial,sans-serif;
         }
+        h1 {
+            font-size: 1.5em;
+            font-family: Arial,sans-serif;
+        }
         .styled-table {
             border-collapse: collapse;
-            margin: 25px 0;
+            margin: 20px 0;
             font-size: 1em;
             font-family: sans-serif;
             min-width: 400px;
@@ -26,7 +30,7 @@
         }
         .styled-table th,
         .styled-table td {
-            padding: 12px 15px;
+            padding: 8px 10px;
             border: 1px solid #000000;
         }
         .second_row td {
@@ -61,16 +65,24 @@
 
         .header {
         width: 100%;
-        padding:30px 0;
+        padding:20px 0;
         text-align: left;
         background: #ffffff;
         color: #000000;
         border-bottom: 2px solid #960630;
         }
 
+        .red-line {
+            width: 100%;
+            padding:5px 0;
+            background: #ffffff;
+            border-bottom: 2px solid #960630;
+        }
+
         .header2 {
         width: 100%;
         padding:2px;
+        height: 10px;
         text-align: right;
         background: #ffffff;
         color: #000000;
@@ -81,7 +93,7 @@
         font-size: 20px;
         display: inline-block;
         border: 1px solid white;
-        padding: 10px 20px;
+        padding: 8px 15px;
         border-radius: 10px;
         cursor: pointer;
         font-weight: 300;
@@ -99,9 +111,7 @@
     </style>
 </head>
 <body>
-    <section class = "header2">
-        <p>Dati SISCAT alla {{data_stampa}}</p>
-    </section>
+    <div class="red-line">&nbsp;</div>
     <h1>Visura {% if storico %} storica {% endif %} per {{tipoImmobile}}</h1>
 
     {% if daticatastali %}
@@ -159,7 +169,7 @@
     {% if dati_catastali_fabbricato_attuali %}
     {% for dict_item in dati_catastali_fabbricato_attuali %}
         <h3>DATI IMMOBILE</h3>
-        <h4>Situazione dell'immobile alla data: {{ dict_item['data_decorrenza'] }}</h4>
+        <h4>Situazione immobile alla data: {{ dict_item['data_decorrenza'].day }}/{{ dict_item['data_decorrenza'].month }}/{{ dict_item['data_decorrenza'].year }}</h4>
         <table class="styled-table">
             <tbody>
                 <tr class="styled-table-head">
@@ -212,7 +222,7 @@
     {% if dati_catastali_terreno_attuali %}
     {% for dict_item in dati_catastali_terreno_attuali %}
         <h3>DATI TERRENO</h3>
-        <h4>Situazione dell'immobile alla data: {{ dict_item['data_decorrenza'] }}</h4>
+        <h4>Situazione immobile alla data: {{ dict_item['data_decorrenza'].day }}/{{ dict_item['data_decorrenza'].month }}/{{ dict_item['data_decorrenza'].year }}</h4>
         <table class="styled-table">
             <thead>
                 <tr >
@@ -296,7 +306,7 @@
 
     {% if dati_catastali_fabbricato_storico %}
     {% for dict_item in dati_catastali_fabbricato_storico %}
-        <h3>DATI IMMOBILE alla data: {{ dict_item['data_decorrenza'] }}</h3>
+        <h3>DATI IMMOBILE alla data: {{ dict_item['data_decorrenza'].day }}/{{ dict_item['data_decorrenza'].month }}/{{ dict_item['data_decorrenza'].year }}</h3>
         <table class="styled-table">
             <thead>
                 <tr >
@@ -350,7 +360,7 @@
 
     {% if dati_catastali_terreno_storico %}
     {% for dict_item in dati_catastali_terreno_storico %}
-        <h3>DATI TERRENO alla data: {{ dict_item['data_decorrenza'] }}</h3>
+        <h3>DATI TERRENO alla data: {{ dict_item['data_decorrenza'].day }}/{{ dict_item['data_decorrenza'].month }}/{{ dict_item['data_decorrenza'].year }}</h3>
         <table class="styled-table">
             <thead>
                 <tr >
