@@ -169,7 +169,7 @@
     {% if dati_catastali_fabbricato_attuali %}
     {% for dict_item in dati_catastali_fabbricato_attuali %}
         <h3>DATI IMMOBILE</h3>
-        <h4>Situazione immobile alla data: {{ dict_item['data_decorrenza'].day }}/{{ dict_item['data_decorrenza'].month }}/{{ dict_item['data_decorrenza'].year }}</h4>
+        <h4>Situazione immobile alla data: {{ dict_item['gen_data_reg'] }}</h4>
         <table class="styled-table">
             <tbody>
                 <tr class="styled-table-head">
@@ -222,7 +222,7 @@
     {% if dati_catastali_terreno_attuali %}
     {% for dict_item in dati_catastali_terreno_attuali %}
         <h3>DATI TERRENO</h3>
-        <h4>Situazione immobile alla data: {{ dict_item['data_decorrenza'].day }}/{{ dict_item['data_decorrenza'].month }}/{{ dict_item['data_decorrenza'].year }}</h4>
+        <h4>Situazione immobile alla data: {{ dict_item['gen_data_reg'] }}</h4>
         <table class="styled-table">
             <thead>
                 <tr >
@@ -306,7 +306,7 @@
 
     {% if dati_catastali_fabbricato_storico %}
     {% for dict_item in dati_catastali_fabbricato_storico %}
-        <h3>DATI IMMOBILE alla data: {{ dict_item['data_decorrenza'].day }}/{{ dict_item['data_decorrenza'].month }}/{{ dict_item['data_decorrenza'].year }}</h3>
+        <h3>DATI IMMOBILE alla data: {{ dict_item['gen_data_reg'] }}</h3>
         <table class="styled-table">
             <thead>
                 <tr >
@@ -360,7 +360,7 @@
 
     {% if dati_catastali_terreno_storico %}
     {% for dict_item in dati_catastali_terreno_storico %}
-        <h3>DATI TERRENO alla data: {{ dict_item['data_decorrenza'].day }}/{{ dict_item['data_decorrenza'].month }}/{{ dict_item['data_decorrenza'].year }}</h3>
+        <h3>DATI TERRENO alla data: {{ dict_item['gen_data_reg'] }}</h3>
         <table class="styled-table">
             <thead>
                 <tr >

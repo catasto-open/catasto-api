@@ -23,7 +23,9 @@ class VisuraQuery(AppQuery):
         if immobili_results:
             immobili_item = []
             for item in immobili_results:
-                immobili_item.append(DatiCatastaliFabbricatoItemResult(**item, by_alias=True).dict())
+                item_dict = DatiCatastaliFabbricatoItemResult(**item, by_alias=True).dict()
+                item_dict['derivanti_da'] = self.compile_dati_derivanti_da(item_dict['gen_tipo_nota'], item_dict['gen_descr'], item_dict['gen_causa'], item_dict['gen_data_reg'], item_dict['gen_progressivo'], item_dict['gen_data_eff'])
+                immobili_item.append(item_dict)
             return immobili_item
         return None
 
@@ -34,7 +36,9 @@ class VisuraQuery(AppQuery):
         if immobili_results:
             immobili_item = []
             for item in immobili_results:
-                immobili_item.append(DatiCatastaliTerrenoItemResult(**item, by_alias=True).dict())
+                item_dict = DatiCatastaliTerrenoItemResult(**item, by_alias=True).dict()
+                item_dict['derivanti_da'] = self.compile_dati_derivanti_da(item_dict['gen_tipo_nota'], item_dict['gen_descr'], item_dict['gen_causa'], item_dict['gen_data_reg'], item_dict['gen_progressivo'], item_dict['gen_data_eff'])
+                immobili_item.append(item_dict)
             return immobili_item
         return None
 
@@ -45,7 +49,9 @@ class VisuraQuery(AppQuery):
         if immobili_results:
             immobili_item = []
             for item in immobili_results:
-                immobili_item.append(TitolareItemResult(**item, by_alias=True).dict())
+                item_dict = TitolareItemResult(**item, by_alias=True).dict()
+                item_dict['derivanti_da'] = self.compile_dati_derivanti_da(item_dict['gen_tipo_nota'], item_dict['gen_descr'], item_dict['gen_causa'], item_dict['gen_data_reg'], item_dict['gen_progressivo'], item_dict['gen_data_eff'])
+                immobili_item.append(item_dict)
             return immobili_item
         return None
 
@@ -71,4 +77,24 @@ class VisuraQuery(AppQuery):
         else:
             return None
 
+    def compile_dati_derivanti_da(self, gen_tipo_nota: str, gen_descr: str, gen_causa: str, gen_data_reg: str, gen_progressivo: str, gen_data_eff: str):
+        derivanti_da = ''
+        if gen_tipo_nota:
+            derivanti_da = f"{gen_tipo_nota}, "
 
+        if gen_causa:
+            derivanti_da = f"{derivanti_da}{gen_causa}, " 
+
+        if gen_descr:
+            derivanti_da = f"{derivanti_da}{gen_descr}, " 
+
+        if (gen_data_eff and gen_data_eff!='01/01/0001'):
+            derivanti_da = f"{derivanti_da}del {gen_data_eff} " 
+
+        if gen_progressivo:
+            derivanti_da = f"{derivanti_da}numero {gen_progressivo} "
+
+        if (gen_data_reg and gen_data_reg!='01/01/0001'):
+            derivanti_da = f"{derivanti_da}in atti dal {gen_data_reg}"
+
+        return derivanti_da

@@ -46,3 +46,7 @@ The swagger interface will be available at
 
 `http://localhost:5000/siscat/api/v1/docs`
 
+### Build image
+docker build . -t pascallike/catasto-api --no-cache
+docker push pascallike/catasto-api
+

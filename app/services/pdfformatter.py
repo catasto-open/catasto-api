@@ -71,9 +71,14 @@ def generate_print_pdf(template: str, data: dict, user_stampa: str) -> FileRespo
         # Fills Jinja template with data
         html_doc_rendered = tm.render(items = [Item(i) for i in data], user_stampa=user_stampa, data_stampa=datetime.datetime.now().strftime("data %d/%m/%Y ore %H:%M"))
 
+    data_aggiornamento = datetime.datetime.now().strftime("%d/%m/%Y")
+
     options = {
         'orientation': 'Landscape',
         'header-html': '/app/app/templates/header.html',
+        'header-right': f"Dati SISCAT aggiornati alla data {data_aggiornamento}",
+        'header-font-name': 'Arial',
+        'header-font-size': 9,
         'footer-html': '/app/app/templates/footer.html',
         'footer-font-name': 'Arial',
         'footer-font-size': 9,

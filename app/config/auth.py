@@ -62,8 +62,6 @@ class CustomAuth(Auth):
             IDToken validation errors
         """
 
-        print('Something')
-
         id_token = self.required(
             security_scopes,
             authorization_credentials
