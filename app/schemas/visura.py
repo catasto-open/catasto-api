@@ -30,6 +30,7 @@ class DatiCatastaliFabbricatoItemResult(BaseModel):
 
 class DatiCatastaliTerrenoItemResult(BaseModel):
     data_decorrenza: date = None
+    progressivo: int = None
     sezione: str = None
     foglio: str = None
     particella: str = None

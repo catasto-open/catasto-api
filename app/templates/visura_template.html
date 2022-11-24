@@ -127,9 +127,9 @@
             </thead>
             <tbody>
                 <tr>
-                    <td>{{ daticatastali['foglio'] }}</td>
-                    <td>{{ daticatastali['particella'] }}</td>
-                    <td>{{ daticatastali['subalterno'] }}</td>
+                    <td>{% if daticatastali['foglio'] is not none %} {{ daticatastali['foglio'] }}  {% endif %}</td>
+                    <td>{% if daticatastali['particella'] is not none %} {{ daticatastali['particella'] }}  {% endif %}</td>
+                    <td>{% if daticatastali['subalterno'] is not none %} {{ daticatastali['subalterno'] }}  {% endif %}</td>
                     {% if daticatastali['data_fine'] %}
                         <td>No</td>
                     {% else %}
@@ -167,8 +167,8 @@
     {% endif %}
 
     {% if dati_catastali_fabbricato_attuali %}
+    <h3>DATI IMMOBILE</h3>
     {% for dict_item in dati_catastali_fabbricato_attuali %}
-        <h3>DATI IMMOBILE</h3>
         <h4>Situazione immobile alla data: {{ dict_item['gen_data_reg'] }}</h4>
         <table class="styled-table">
             <tbody>
@@ -220,8 +220,8 @@
     {% endif %}
 
     {% if dati_catastali_terreno_attuali %}
+    <h3>DATI TERRENO</h3>
     {% for dict_item in dati_catastali_terreno_attuali %}
-        <h3>DATI TERRENO</h3>
         <h4>Situazione immobile alla data: {{ dict_item['gen_data_reg'] }}</h4>
         <table class="styled-table">
             <thead>

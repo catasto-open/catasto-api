@@ -85,6 +85,8 @@ class VisuraView:
         sql_view = \
         f"""
         SELECT
+            DISTINCT
+            C.CODICE,
             F.SEZIONE,
             F.IMMOBILE,
             F.TIPO_IMM AS TIPO_IMMOBILE,
@@ -186,6 +188,7 @@ class VisuraView:
         sql_view = \
         f"""
         SELECT
+            DISTINCT
             T.CODICE,
             T.SEZIONE,
             T.IMMOBILE,

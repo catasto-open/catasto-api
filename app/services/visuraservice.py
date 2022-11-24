@@ -22,9 +22,12 @@ class VisuraQuery(AppQuery):
         ).all()
         if immobili_results:
             immobili_item = []
+            progressivo = 0
             for item in immobili_results:
+                progressivo = progressivo + 1
                 item_dict = DatiCatastaliFabbricatoItemResult(**item, by_alias=True).dict()
                 item_dict['derivanti_da'] = self.compile_dati_derivanti_da(item_dict['gen_tipo_nota'], item_dict['gen_descr'], item_dict['gen_causa'], item_dict['gen_data_reg'], item_dict['gen_progressivo'], item_dict['gen_data_eff'])
+                item_dict['progressivo'] = progressivo
                 immobili_item.append(item_dict)
             return immobili_item
         return None
@@ -35,9 +38,12 @@ class VisuraQuery(AppQuery):
         ).all()
         if immobili_results:
             immobili_item = []
+            progressivo = 0
             for item in immobili_results:
+                progressivo = progressivo + 1
                 item_dict = DatiCatastaliTerrenoItemResult(**item, by_alias=True).dict()
                 item_dict['derivanti_da'] = self.compile_dati_derivanti_da(item_dict['gen_tipo_nota'], item_dict['gen_descr'], item_dict['gen_causa'], item_dict['gen_data_reg'], item_dict['gen_progressivo'], item_dict['gen_data_eff'])
+                item_dict['progressivo'] = progressivo
                 immobili_item.append(item_dict)
             return immobili_item
         return None

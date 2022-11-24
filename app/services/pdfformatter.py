@@ -8,7 +8,7 @@ class Item:
     def __init__(self, vals):
         self.__dict__ = vals
 
-def generate_print_pdf(template: str, data: dict, user_stampa: str) -> FileResponse:
+def generate_print_pdf(template: str, data: dict, user_stampa: str, data_stampa: str) -> FileResponse:
 
     templateLoader = jinja2.FileSystemLoader(searchpath="./app/templates")
     templateEnv = jinja2.Environment(loader=templateLoader)
@@ -66,10 +66,10 @@ def generate_print_pdf(template: str, data: dict, user_stampa: str) -> FileRespo
         html_doc_rendered = tm.render(tipoImmobile=tipoImmobile, storico=storico, daticatastali = data, dati_catastali_fabbricato_attuali=dati_catastali_fabbricato_attuali, 
         dati_catastali_terreno_attuali=dati_catastali_terreno_attuali, titolari_attuali=titolari_attuali, 
         dati_catastali_fabbricato_storico=dati_catastali_fabbricato_storico, dati_catastali_terreno_storico=dati_catastali_terreno_storico,
-        titolari_storico=titolari_storico, user_stampa=user_stampa, data_stampa=datetime.datetime.now().strftime("data %d/%m/%Y ore %H:%M"))
+        titolari_storico=titolari_storico, user_stampa=user_stampa)
     else:
         # Fills Jinja template with data
-        html_doc_rendered = tm.render(items = [Item(i) for i in data], user_stampa=user_stampa, data_stampa=datetime.datetime.now().strftime("data %d/%m/%Y ore %H:%M"))
+        html_doc_rendered = tm.render(items = [Item(i) for i in data], user_stampa=user_stampa)
 
     data_aggiornamento = datetime.datetime.now().strftime("%d/%m/%Y")
 
@@ -82,7 +82,7 @@ def generate_print_pdf(template: str, data: dict, user_stampa: str) -> FileRespo
         'footer-html': '/app/app/templates/footer.html',
         'footer-font-name': 'Arial',
         'footer-font-size': 9,
-        'footer-left': f"Stampato da {user_stampa}",
+        'footer-left': f"Stampato da {user_stampa} in {data_stampa}",
         'enable-local-file-access': True
     }
 
