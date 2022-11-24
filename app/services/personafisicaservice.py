@@ -5,6 +5,10 @@ from app.models.personafisica import PersonaFisicaView
 from app.schemas.personafisica import (
     PersonaFisicaItem
 )
+from app.models.general import GeneralView
+from app.schemas.general import (
+    VersionItem
+)
 
 class PersonaFisicaService(AppService):
 
@@ -16,6 +20,9 @@ class PersonaFisicaService(AppService):
 
     def get_persona_by_dati_anagrafici(self, comune: str, nome: str, cognome: str, codicecomunedinascita: str, datadinascita: date) -> PersonaFisicaItem:
         return PersonaFisicaQuery(self.db).select_datianagrafici(comune, nome, cognome, codicecomunedinascita, datadinascita)
+
+    def get_version(self) -> VersionItem:
+        return PersonaFisicaQuery(self.db).select_versione()
 
 
 class PersonaFisicaQuery(AppQuery):
@@ -52,4 +59,13 @@ class PersonaFisicaQuery(AppQuery):
             for item in personefisiche_results:
                 personefisiche_item.append(PersonaFisicaItem(**item, by_alias=True).dict())
             return personefisiche_item
+        return None
+
+    def select_versione(self) -> VersionItem:
+        version_results = self.db.execute(
+            GeneralView.select_versione()
+        ).all()
+        if version_results:
+            for item in version_results:
+                return VersionItem(**item, by_alias=True).dict()
         return None

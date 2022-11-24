@@ -1,4 +1,3 @@
-from datetime import date
 from typing import List
 from app.services.main import AppService, AppQuery
 from app.models.visura import VisuraView

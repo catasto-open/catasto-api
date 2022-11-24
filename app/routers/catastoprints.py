@@ -89,11 +89,11 @@ async def visura(
                     status_code=422, 
                     detail="Dati input non validi")
 
-        data_stampa=datetime.datetime.now().strftime("data %d/%m/%Y ore %H:%M")
+        data_aggiornamento= PersonaFisicaService(db).get_version()['data_aggiornamento']
 
         if result:
             try:
-                return generate_print_pdf("Visura", result, username, data_stampa)
+                return generate_print_pdf("Visura", result, username, data_aggiornamento)
             except BaseException:
                 raise HTTPException(
                     status_code=500, 
@@ -204,12 +204,12 @@ async def immobili(
                 status_code=422, 
                 detail="Dati input non validi")
 
-    data_stampa=datetime.datetime.now().strftime("data %d/%m/%Y ore %H:%M")
+    data_aggiornamento= PersonaFisicaService(db).get_version()['data_aggiornamento']
 
     if result:
         if(format=='pdf'):
             try:
-                return generate_print_pdf("Immobili", result, username, data_stampa)
+                return generate_print_pdf("Immobili", result, username, data_aggiornamento)
             except BaseException:
                 raise HTTPException(
                     status_code=500, 
@@ -297,12 +297,12 @@ async def persone_fisiche(
                 status_code=422, 
                 detail="Dati input non validi")
 
-    data_stampa=datetime.datetime.now().strftime("data %d/%m/%Y ore %H:%M")
+    data_aggiornamento= PersonaFisicaService(db).get_version()['data_aggiornamento']
 
     if result:
         if(format=='pdf'):
             try:
-                return generate_print_pdf("Persone Fisiche", result, username, data_stampa)
+                return generate_print_pdf("Persone Fisiche", result, username, data_aggiornamento)
             except BaseException:
                 raise HTTPException(
                     status_code=500, 
@@ -370,12 +370,12 @@ async def persone_giuridiche(
                 status_code=422, 
                 detail="Dati input non validi")
 
-    data_stampa=datetime.datetime.now().strftime("data %d/%m/%Y ore %H:%M")
+    data_aggiornamento= PersonaFisicaService(db).get_version()['data_aggiornamento']
 
     if result:
         if(format=='pdf'):
             try:
-                return generate_print_pdf("Persone Giuridiche", result, username, data_stampa)
+                return generate_print_pdf("Persone Giuridiche", result, username, data_aggiornamento)
             except BaseException:
                 raise HTTPException(
                     status_code=500, 

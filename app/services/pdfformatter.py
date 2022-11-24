@@ -2,13 +2,14 @@ import jinja2
 import pdfkit
 import random
 import datetime
+from datetime import date
 from fastapi.responses import FileResponse
 
 class Item:
     def __init__(self, vals):
         self.__dict__ = vals
 
-def generate_print_pdf(template: str, data: dict, user_stampa: str, data_stampa: str) -> FileResponse:
+def generate_print_pdf(template: str, data: dict, user_stampa: str, data_aggiornamento: date) -> FileResponse:
 
     templateLoader = jinja2.FileSystemLoader(searchpath="./app/templates")
     templateEnv = jinja2.Environment(loader=templateLoader)
@@ -71,18 +72,19 @@ def generate_print_pdf(template: str, data: dict, user_stampa: str, data_stampa:
         # Fills Jinja template with data
         html_doc_rendered = tm.render(items = [Item(i) for i in data], user_stampa=user_stampa)
 
-    data_aggiornamento = datetime.datetime.now().strftime("%d/%m/%Y")
+    data_stampa = datetime.datetime.now().strftime("%d/%m/%Y")
+    data_aggiornamento_str = data_aggiornamento.strftime("%d/%m/%Y")
 
     options = {
         'orientation': 'Landscape',
         'header-html': '/app/app/templates/header.html',
-        'header-right': f"Dati SISCAT aggiornati alla data {data_aggiornamento}",
+        'header-right': f"Dati SISCAT aggiornati alla data {data_aggiornamento_str}",
         'header-font-name': 'Arial',
         'header-font-size': 9,
         'footer-html': '/app/app/templates/footer.html',
         'footer-font-name': 'Arial',
         'footer-font-size': 9,
-        'footer-left': f"Stampato da {user_stampa} in {data_stampa}",
+        'footer-left': f"Stampato da {user_stampa} il {data_stampa}",
         'enable-local-file-access': True
     }
 
