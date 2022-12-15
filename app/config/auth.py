@@ -9,6 +9,10 @@ from fastapi.security import (
 from fastapi_third_party_auth import Auth, GrantType, IDToken
 
 from app.config.config import configuration as cfg
+from app.config.logging import create_logger
+
+
+logger = create_logger(name="app.config.client")
 
 
 OIDC_config = {
@@ -82,6 +86,7 @@ class CustomAuth(Auth):
             if id_token.tipo_utente == "dipendente":
                 return id_token
             else:
+                logger.error("L'utente non ha un profilo DIPENDENTE");
                 raise HTTPException(status.HTTP_403_FORBIDDEN)
 
 
