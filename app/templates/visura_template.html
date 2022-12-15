@@ -202,18 +202,26 @@
                     <td>{{  dict_item['categoria'] }}</td>
                     <td>{{  dict_item['classe'] }}</td>
                     <td>{{  dict_item['consistenza'] }}</td>
-                    <td>{% if daticatastali['superficie'] is not none %} {{  dict_item['superficie'] }} mq {% endif %}</td>
-                    <td>{% if daticatastali['rendita'] is not none %}Euro {{  dict_item['rendita'] }} {% endif %}</td>
+                    <td>{% if dict_item['superficie'] is not none %} {{  dict_item['superficie'] }} mq {% endif %}</td>
+                    <td>{% if dict_item['rendita'] is not none %}Euro {{  dict_item['rendita'] }} {% endif %}</td>
                     <td>{{  dict_item['derivanti_da'] or ' ' }}</td>
                 </tr>
                 <tr >
                     <td colspan="5" class="label_colspanned">Indirizzo</td>
                     <td colspan="8" class="value_colspanned">{{ dict_item['indirizzo'] or ' ' }}</td>
                 </tr>
-                <tr >
-                    <td colspan="5" class="label_colspanned">Annotazioni</td>
-                    <td colspan="8" class="value_colspanned">{{ dict_item['annotazioni'] or ' ' }}</td>
-                </tr>
+                {% if dict_item['annotazioni'] is not none %}
+                    <tr >
+                        <td colspan="5" class="label_colspanned">Annotazioni</td>
+                        <td colspan="8" class="value_colspanned">{{ dict_item['annotazioni'] or ' ' }}</td>
+                    </tr>
+                {% endif %}
+                {% if dict_item['partita'] is not none %}
+                    <tr >
+                        <td colspan="5" class="label_colspanned">Partita</td>
+                        <td colspan="8" class="value_colspanned">{{ dict_item['partita'] or ' ' }}</td>
+                    </tr>
+                {% endif %}
             </tbody>
         </table>
     {% endfor %}
@@ -259,14 +267,22 @@
                     <td>{{  dict_item['superfice_ha'] or ' ' }}</td>
                     <td>{{  dict_item['superfice_are'] }}</td>
                     <td>{{  dict_item['superfice_ca'] }}</td>
-                    <td>{% if daticatastali['reddito_dominicale'] is not none %}Euro {{  dict_item['reddito_dominicale'] }} {% endif %}</td>
-                    <td>{% if daticatastali['reddito_agrario'] is not none %}Euro {{  dict_item['reddito_agrario'] }} {% endif %}</td>
+                    <td>{% if dict_item['reddito_dominicale'] is not none %}Euro {{  dict_item['reddito_dominicale'] }} {% endif %}</td>
+                    <td>{% if dict_item['reddito_agrario'] is not none %}Euro {{  dict_item['reddito_agrario'] }} {% endif %}</td>
                     <td>{{  dict_item['derivanti_da'] or ' ' }}</td>
                 </tr>
-                <tr >
-                    <td colspan="5" class="label_colspanned">Annotazioni</td>
-                    <td colspan="8" class="value_colspanned">{{ dict_item['annotazioni'] or ' ' }}</td>
-                </tr>
+                {% if dict_item['annotazioni'] is not none %}
+                    <tr >
+                        <td colspan="5" class="label_colspanned">Annotazioni</td>
+                        <td colspan="8" class="value_colspanned">{{ dict_item['annotazioni'] or ' ' }}</td>
+                    </tr>
+                {% endif %}
+                {% if dict_item['partita'] is not none %}
+                    <tr >
+                        <td colspan="5" class="label_colspanned">Partita</td>
+                        <td colspan="8" class="value_colspanned">{{ dict_item['partita'] or ' ' }}</td>
+                    </tr>
+                {% endif %}
             </tbody>
         </table>
     {% endfor %}
@@ -341,18 +357,26 @@
                     <td>{{  dict_item['categoria'] }}</td>
                     <td>{{  dict_item['classe'] }}</td>
                     <td>{{  dict_item['consistenza'] }}</td>
-                    <td>{% if daticatastali['superficie'] is not none %} {{  dict_item['superficie'] }} mq {% endif %}</td>
-                    <td>{% if daticatastali['rendita'] is not none %}Euro {{  dict_item['rendita'] }} {% endif %}</td>
+                    <td>{% if dict_item['superficie'] is not none %} {{  dict_item['superficie'] }} mq {% endif %}</td>
+                    <td>{% if dict_item['rendita'] is not none %}Euro {{  dict_item['rendita'] }} {% endif %}</td>
                     <td>{{  dict_item['derivanti_da'] or ' ' }}</td>
                 </tr>
                 <tr >
                     <td colspan="5" class="label_colspanned">Indirizzo</td>
                     <td colspan="8" class="value_colspanned">{{ dict_item['indirizzo'] or ' ' }}</td>
                 </tr>
-                <tr >
-                    <td colspan="5" class="label_colspanned">Annotazioni</td>
-                    <td colspan="8" class="value_colspanned">{{ dict_item['annotazioni'] or ' ' }}</td>
-                </tr>
+                {% if dict_item['annotazioni'] is not none %}
+                    <tr >
+                        <td colspan="5" class="label_colspanned">Annotazioni</td>
+                        <td colspan="8" class="value_colspanned">{{ dict_item['annotazioni'] or ' ' }}</td>
+                    </tr>
+                {% endif %}
+                {% if dict_item['partita'] is not none %}
+                    <tr >
+                        <td colspan="5" class="label_colspanned">Partita</td>
+                        <td colspan="8" class="value_colspanned">{{ dict_item['partita'] or ' ' }}</td>
+                    </tr>
+                {% endif %}
             </tbody>
         </table>
     {% endfor %}
@@ -397,14 +421,22 @@
                     <td>{{  dict_item['superfice_ha'] or ' ' }}</td>
                     <td>{{  dict_item['superfice_are'] }}</td>
                     <td>{{  dict_item['superfice_ca'] }}</td>
-                    <td>{% if daticatastali['reddito_dominicale'] is not none %}Euro {{  dict_item['reddito_dominicale'] }} {% endif %}</td>
-                    <td>{% if daticatastali['reddito_agrario'] is not none %}Euro {{  dict_item['reddito_agrario'] }} {% endif %}</td>
+                    <td>{% if dict_item['reddito_dominicale'] is not none %}Euro {{  dict_item['reddito_dominicale'] }} {% endif %}</td>
+                    <td>{% if dict_item['reddito_agrario'] is not none %}Euro {{  dict_item['reddito_agrario'] }} {% endif %}</td>
                     <td>{{  dict_item['derivanti_da'] or ' ' }}</td>
                 </tr>
-                <tr >
-                    <td colspan="5" class="label_colspanned">Annotazioni</td>
-                    <td colspan="8" class="value_colspanned">{{ dict_item['annotazioni'] or ' ' }}</td>
-                </tr>
+                {% if dict_item['annotazioni'] is not none %}
+                    <tr >
+                        <td colspan="5" class="label_colspanned">Annotazioni</td>
+                        <td colspan="8" class="value_colspanned">{{ dict_item['annotazioni'] or ' ' }}</td>
+                    </tr>
+                {% endif %}
+                {% if dict_item['partita'] is not none %}
+                    <tr >
+                        <td colspan="5" class="label_colspanned">Partita</td>
+                        <td colspan="8" class="value_colspanned">{{ dict_item['partita'] or ' ' }}</td>
+                    </tr>
+                {% endif %}
             </tbody>
         </table>
         {% endfor %}

@@ -12,7 +12,10 @@ from fastapi.responses import FileResponse
 from datetime import date
 from enum import Enum
 import re
-import datetime
+from app.config.logging import create_logger
+
+
+logger = create_logger(name="app.config.client")
 
 router = APIRouter(
     prefix="/catasto",
@@ -27,7 +30,7 @@ async def healthcheck():
 
 @router.get("/auth/")
 async def protectedURL(user: OpenAMIDToken = Security(auth.authorized)):
-    print(user)
+    logger.debug(user.tipo_utente)
     return {"status": "Logged in"}
 
 @router.get("/stampa/visura", response_class=FileResponse)

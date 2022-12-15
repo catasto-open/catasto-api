@@ -18,6 +18,7 @@ class DatiCatastaliFabbricatoItemResult(BaseModel):
     consistenza: str = None
     superficie: str = None 
     rendita: str = None
+    partita: str = None
     gen_tipo_nota: str = None
     gen_descr: str = None
     gen_causa: str = None
@@ -27,6 +28,7 @@ class DatiCatastaliFabbricatoItemResult(BaseModel):
     derivanti_da: str = None
     indirizzo: str = None
     annotazioni: str = None
+
 
 class DatiCatastaliTerrenoItemResult(BaseModel):
     data_decorrenza: date = None
@@ -42,6 +44,7 @@ class DatiCatastaliTerrenoItemResult(BaseModel):
     superfice_ca: str = None
     reddito_dominicale: str = None
     reddito_agrario: str = None
+    partita: str = None
     gen_tipo_nota: str = None
     gen_descr: str = None
     gen_causa: str = None
@@ -50,6 +53,7 @@ class DatiCatastaliTerrenoItemResult(BaseModel):
     gen_data_eff: str = None
     derivanti_da: str = None
     annotazioni: str = None
+
 
 class TitolareItemResult(BaseModel):
     data_decorrenza: date = None
