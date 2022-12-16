@@ -52,6 +52,10 @@ class DevConfig(GlobalConfig):
         None,
         env="DEV_OPENAM_OIDC_WELL_KNOWN_CONTEXT",
     )
+    SISCAT_WHITELIST_DIPENDENTE: Optional[str] = Field(
+        None,
+        env="DEV_SISCAT_WHITELIST_DIPENDENTE",
+    )
     SISCAT_DB_SERVER_HOST: Optional[str] = Field(
         None, env="DEV_SISCAT_DB_SERVER_HOST"
     )
@@ -98,6 +102,10 @@ class ProdConfig(GlobalConfig):
     OPENAM_OIDC_WELL_KNOWN_CONTEXT: Optional[str] = Field(
         None,
         env="PROD_OPENAM_OIDC_WELL_KNOWN_CONTEXT",
+    )
+    SISCAT_WHITELIST_DIPENDENTE: Optional[str] = Field(
+        None,
+        env="PROD_SISCAT_WHITELIST_DIPENDENTE",
     )
     SISCAT_DB_SERVER_HOST: Optional[str] = Field(
         None, env="PROD_SISCAT_DB_SERVER_HOST"

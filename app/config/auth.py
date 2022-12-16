@@ -83,6 +83,9 @@ class CustomAuth(Auth):
             user_type = userinfo.json().get('iv_tipoutente')
             id_token = OpenAMIDToken(**id_token.dict())
             id_token.tipo_utente = user_type
+            if cfg.SISCAT_WHITELIST_DIPENDENTE:
+                if id_token.sub in cfg.SISCAT_WHITELIST_DIPENDENTE.split(","):
+                    id_token.tipo_utente = "dipendente"
             if id_token.tipo_utente == "dipendente":
                 return id_token
             else:
