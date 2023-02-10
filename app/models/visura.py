@@ -153,7 +153,7 @@ class VisuraView:
             AND F.IMMOBILE = IND.IMMOBILE
             AND F.TIPO_IMM = IND.TIPO_IMM
             AND F.PROGRESSIV = IND.PROGRESSIV
-        JOIN CTCN.CUCODTOP TOP ON
+        LEFT JOIN CTCN.CUCODTOP TOP ON
             TOP.CODICE = IND.TOPONIMO
         LEFT JOIN CTCN.CUTIPNOT N ON
             N.TIPO_NOTA = F.GEN_TIPO
@@ -359,6 +359,7 @@ class VisuraView:
             AND T.CODICE = '{comune}'
             {checktipo} {strdatafine}
         ORDER BY
+            DATA_FINE DESC,
             NOMINATIVO
         """
         return sql_view
