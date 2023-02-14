@@ -195,7 +195,7 @@ class ImmobileView:
                 F.COMUNE = VT.CODICE
                 AND F.FOGLIO LIKE VT.FOGLIO::TEXT
                 AND F.NUMERO = VT.PARTICELLA
-            INNER JOIN CTCN.CUINDIRI C
+            LEFT JOIN CTCN.CUINDIRI C
                 ON
                 C.CODICE = VT.CODICE
                 AND C.IMMOBILE = VT.IMMOBILE)
@@ -221,7 +221,7 @@ class ImmobileView:
             F.COMUNE = VF.CODICE
             AND F.FOGLIO = VF.FOGLIO
             AND F.NUMERO = VF.PARTICELLA
-        INNER JOIN CTCN.CUINDIRI C
+        LEFT JOIN CTCN.CUINDIRI C
                 ON
             C.CODICE = VF.CODICE
             AND C.IMMOBILE = VF.IMMOBILE)) F
@@ -293,7 +293,7 @@ class ImmobileView:
                 F.COMUNE = VT.CODICE
                 AND F.FOGLIO LIKE VT.FOGLIO::TEXT
                 AND F.NUMERO = VT.PARTICELLA
-            INNER JOIN CTCN.CUINDIRI C
+            LEFT JOIN CTCN.CUINDIRI C
                 ON
                 C.CODICE = VT.CODICE
                 AND C.IMMOBILE = VT.IMMOBILE)
@@ -319,7 +319,7 @@ class ImmobileView:
             F.COMUNE = VF.CODICE
             AND F.FOGLIO = VF.FOGLIO
             AND F.NUMERO = VF.PARTICELLA
-        INNER JOIN CTCN.CUINDIRI C
+        LEFT JOIN CTCN.CUINDIRI C
                 ON
             C.CODICE = VF.CODICE
             AND C.IMMOBILE = VF.IMMOBILE)) F
