@@ -140,8 +140,11 @@
         </table>
     {% endif %}
 
-    {% if titolari_attuali is not none %}
-        <h3>INTESTATI ATTUALI</h3>
+    <h3>INTESTATI ATTUALI</h3>
+    {% if titolari_attuali is none and titolari_attuali[1] is not none %}
+        <p>Dato non presente</p>
+    {% endif %}
+    {% if titolari_attuali is not none and titolari_attuali[1] is not none %}
         <table class="styled-table">
             <thead>
                 <tr >
@@ -151,7 +154,7 @@
                 </tr>
             </thead>
             <tbody>
-                {% for dict_item in titolari_attuali %}
+                {% for dict_item in titolari_attuali[0] %}
                 <tr>
                     <td>{{ dict_item['nominativo'] }}</td>
                     <td>{{ dict_item['codice_fiscale'] }}</td>
@@ -287,11 +290,13 @@
         </table>
     {% endfor %}
     {% endif %}
-<br/><br/><br/><br/><br/><br/><br/><br/><br/>
     {% if storico %}
+    <br/>
     <h2>Dati dello storico</h2>
     {% if titolari_storico is not none %}
-    <h3>INTESTATI</h3>
+    {% for date_block in titolari_storico %}
+    {% if date_block != 0 and titolari_storico[date_block] is not none and titolari_storico[date_block][0] is not none %}
+    <h3>INTESTATI fino alla data {{ date_block }}</h3>
     <table class="styled-table">
         <thead>
             <tr >
@@ -301,11 +306,11 @@
             </tr>
         </thead>
         <tbody>
-            {% for dict_item in titolari_storico %}
+            {% for dict_item in titolari_storico[date_block] %}
             <tr>
-                <td>{{ dict_item['nominativo'] }}</td>
-                <td>{{ dict_item['codice_fiscale'] }}</td>
-                <td>{{ dict_item['titolo'] or ' ' }} {{ dict_item['quota'] or ' ' }}</td>
+                <td class="value_colspanned">{{ dict_item['nominativo'] }}</td>
+                <td class="value_colspanned">{{ dict_item['codice_fiscale'] }}</td>
+                <td class="value_colspanned">{{ dict_item['titolo'] or ' ' }} {{ dict_item['quota'] or ' ' }}</td>
             </tr>
             <tr>
                 <td  class="label_colspanned">Dalla data</td>
@@ -318,6 +323,8 @@
             {% endfor %}
         </tbody>
     </table>
+    {% endif %}
+    {% endfor %}
     {% endif %}
 
     {% if dati_catastali_fabbricato_storico %}

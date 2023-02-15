@@ -12,7 +12,7 @@ class VisuraView:
             checktipo = ""
 
         if not flagstorico:
-            strdatafine = " AND UN.DATA_FINE_F > ('NOW'::TEXT)::DATE"
+            strdatafine = " AND UN.DATA_FINE_F >= ('NOW'::TEXT)::DATE"
         else:
             strdatafine = " AND UN.DATA_FINE_F < ('NOW'::TEXT)::DATE"
 
@@ -78,7 +78,7 @@ class VisuraView:
     def select_dettagli_fabbricato(flagstorico: bool, comune: str, foglio:str, particella: str, codiceimmobile: int) -> str:
 
         if not flagstorico:
-            strdatafine = " AND COALESCE(TO_DATE(F.CON_EFF::TEXT, 'DDMMYYYY'::TEXT), 'NOW'::TEXT::DATE + 1) > ('NOW'::TEXT)::DATE"
+            strdatafine = " AND COALESCE(TO_DATE(F.CON_EFF::TEXT, 'DDMMYYYY'::TEXT), 'NOW'::TEXT::DATE + 1) >= ('NOW'::TEXT)::DATE"
         else:
             strdatafine = " AND COALESCE(TO_DATE(F.CON_EFF::TEXT, 'DDMMYYYY'::TEXT), 'NOW'::TEXT::DATE + 1) < ('NOW'::TEXT)::DATE"
 
@@ -181,7 +181,7 @@ class VisuraView:
     def select_dettagli_terreno(flagstorico: bool, comune: str, foglio:str, particella: str, codiceimmobile: int) -> str:
 
         if not flagstorico:
-            strdatafine = " AND COALESCE(TO_DATE(T.CON_EFF::TEXT, 'DDMMYYYY'::TEXT), 'NOW'::TEXT::DATE + 1) > ('NOW'::TEXT)::DATE"
+            strdatafine = " AND COALESCE(TO_DATE(T.CON_EFF::TEXT, 'DDMMYYYY'::TEXT), 'NOW'::TEXT::DATE + 1) >= ('NOW'::TEXT)::DATE"
         else:
             strdatafine = " AND COALESCE(TO_DATE(T.CON_EFF::TEXT, 'DDMMYYYY'::TEXT), 'NOW'::TEXT::DATE + 1) < ('NOW'::TEXT)::DATE"
 
@@ -263,7 +263,7 @@ class VisuraView:
             checktipo = ""
 
         if not flagstorico:
-            strdatafine = " AND COALESCE(TO_DATE(T.CON_VALIDA::TEXT, 'DDMMYYYY'::TEXT), 'NOW'::TEXT::DATE + 1) > ('NOW'::TEXT)::DATE"
+            strdatafine = " AND COALESCE(TO_DATE(T.CON_VALIDA::TEXT, 'DDMMYYYY'::TEXT), 'NOW'::TEXT::DATE + 1) >= ('NOW'::TEXT)::DATE"
         else:
             strdatafine = " AND COALESCE(TO_DATE(T.CON_VALIDA::TEXT, 'DDMMYYYY'::TEXT), 'NOW'::TEXT::DATE + 1) < ('NOW'::TEXT)::DATE"
 

@@ -48,16 +48,21 @@ class VisuraQuery(AppQuery):
         return None
 
     def select_titolari(self, flagstorico: bool, comune: str, codiceimmobile: int, tipoimmobile: str) -> List[DatiCatastaliFabbricatoItemResult]:
-        immobili_results = self.db.execute(
+        titolari_results = self.db.execute(
             VisuraView.select_titolari(flagstorico=flagstorico, comune=comune, codiceimmobile=codiceimmobile, tipoimmobile=tipoimmobile)
         ).all()
-        if immobili_results:
-            immobili_item = []
-            for item in immobili_results:
+        if titolari_results:
+            titolare_items = {}
+            current_date = None
+            titolare_items[0] = []
+            for item in titolari_results:
                 item_dict = TitolareItemResult(**item, by_alias=True).dict()
+                if item_dict['data_fine'] != current_date:
+                    current_date = item_dict['data_fine']
+                    titolare_items[current_date or 0] = []
                 item_dict['derivanti_da'] = self.compile_dati_derivanti_da(item_dict['gen_tipo_nota'], item_dict['gen_descr'], item_dict['gen_causa'], item_dict['gen_data_reg'], item_dict['gen_progressivo'], item_dict['gen_data_eff'])
-                immobili_item.append(item_dict)
-            return immobili_item
+                titolare_items[current_date or 0].append(item_dict)
+            return titolare_items
         return None
 
     def select_codiceimmobile(self, flagstorico: bool, comune: str, codiceimmobile: int, tipoimmobile: str) -> VisuraItem:

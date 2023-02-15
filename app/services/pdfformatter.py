@@ -51,7 +51,7 @@ def generate_print_pdf(template: str, data: dict, user_stampa: str, data_aggiorn
             dati_catastali_terreno_attuali=[Item(i) for i in data['dati_catastali_terreno_attuali']]
             tipoImmobile = 'terreno'
         if(data['titolari_attuali']):
-            titolari_attuali=[Item(i) for i in data['titolari_attuali']]
+            titolari_attuali=data['titolari_attuali']
         if(data['dati_catastali_fabbricato_storico']):
             dati_catastali_fabbricato_storico=[Item(i) for i in data['dati_catastali_fabbricato_storico']]
             tipoImmobile = 'fabbricato'
@@ -61,7 +61,7 @@ def generate_print_pdf(template: str, data: dict, user_stampa: str, data_aggiorn
             tipoImmobile = 'terreno'
             storico = True
         if(data['titolari_storico']):
-            titolari_storico=[Item(i) for i in data['titolari_storico']]
+            titolari_storico=data['titolari_storico']
             storico = True
 
         html_doc_rendered = tm.render(tipoImmobile=tipoImmobile, storico=storico, daticatastali = data, dati_catastali_fabbricato_attuali=dati_catastali_fabbricato_attuali, 
