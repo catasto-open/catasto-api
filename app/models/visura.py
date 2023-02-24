@@ -281,8 +281,9 @@ class VisuraView:
                 WHEN COALESCE(T.NUMERATORE, 0) > 0 THEN (T.NUMERATORE || '/'::TEXT) || T.DENOMINATO
                 ELSE ''::TEXT
             END AS QUOTA,
-            TO_DATE(T.GEN_VALIDA::TEXT, 'DDMMYYYY'::TEXT) AS DATA_DECORRENZA,
-            TO_DATE(T.CON_VALIDA::TEXT, 'DDMMYYYY'::TEXT) AS DATA_FINE,
+            COALESCE(TO_CHAR(TO_DATE(T.GEN_VALIDA::TEXT, 'DDMMYYYY'::TEXT), 'DD/MM/YYYY'), '') AS DATA_DECORRENZA,
+            COALESCE(TO_CHAR(TO_DATE(T.CON_VALIDA::TEXT, 'DDMMYYYY'::TEXT), 'DD/MM/YYYY'), '') AS DATA_FINE,
+            TO_DATE(T.CON_VALIDA::TEXT, 'DDMMYYYY'::TEXT) AS DATA_FINE_D,
             COALESCE(TO_DATE(T.CON_VALIDA::TEXT, 'DDMMYYYY'::TEXT), 'NOW'::TEXT::DATE + 1) AS DATA_FINE_F,
             T.IDENTIFICA,
             COALESCE(N.DESCRIZION, '') AS GEN_TIPO_NOTA,
@@ -328,8 +329,9 @@ class VisuraView:
                 WHEN COALESCE(T.NUMERATORE, 0) > 0 THEN (T.NUMERATORE || '/'::TEXT) || T.DENOMINATO
                 ELSE ''::TEXT
             END AS QUOTA,
-            TO_DATE(T.GEN_VALIDA::TEXT, 'DDMMYYYY'::TEXT) AS DATA_DECORRENZA,
-            TO_DATE(T.CON_VALIDA::TEXT, 'DDMMYYYY'::TEXT) AS DATA_FINE,
+            COALESCE(TO_CHAR(TO_DATE(T.GEN_VALIDA::TEXT, 'DDMMYYYY'::TEXT), 'DD/MM/YYYY'), '') AS DATA_DECORRENZA,
+            COALESCE(TO_CHAR(TO_DATE(T.CON_VALIDA::TEXT, 'DDMMYYYY'::TEXT), 'DD/MM/YYYY'), '') AS DATA_FINE,
+            TO_DATE(T.CON_VALIDA::TEXT, 'DDMMYYYY'::TEXT) AS DATA_FINE_D,
             COALESCE(TO_DATE(T.CON_VALIDA::TEXT, 'DDMMYYYY'::TEXT), 'NOW'::TEXT::DATE + 1) AS DATA_FINE_F,
             T.IDENTIFICA,
             COALESCE(N.DESCRIZION, '') AS GEN_TIPO_NOTA,
@@ -359,12 +361,10 @@ class VisuraView:
             AND T.CODICE = '{comune}'
             {checktipo} {strdatafine}
         ORDER BY
-            DATA_FINE DESC,
+            DATA_FINE_D DESC,
             NOMINATIVO
         """
         return sql_view
-
-
 
 
     def select_codicesoggetto(flagstorico: bool, cs: int, tipoimmobile: str) -> str:

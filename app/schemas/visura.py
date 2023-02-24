@@ -56,8 +56,8 @@ class DatiCatastaliTerrenoItemResult(BaseModel):
 
 
 class TitolareItemResult(BaseModel):
-    data_decorrenza: date = None
-    data_fine: date = None
+    data_decorrenza: str = None
+    data_fine: str = None
     sezione: str = None
     immobile: str = None
     tipo_immobile: str = None
