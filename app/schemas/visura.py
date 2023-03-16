@@ -4,6 +4,12 @@ from app.schemas.personafisica import PersonaFisicaItemResult
 from app.schemas.personagiuridica import PersonaGiuridicaItemResult
 from pydantic import BaseModel
 
+
+class ErediItemResult(BaseModel):
+    foglio: str = None
+    particella: str = None
+    subalterno: str = None
+
 class DatiCatastaliFabbricatoItemResult(BaseModel):
     data_decorrenza: date = None
     progressivo: int = None
@@ -28,6 +34,9 @@ class DatiCatastaliFabbricatoItemResult(BaseModel):
     derivanti_da: str = None
     indirizzo: str = None
     annotazioni: str = None
+    mutazioneiniziale: int = None
+
+    eredi: List[ErediItemResult] = []
 
 
 class DatiCatastaliTerrenoItemResult(BaseModel):
@@ -53,6 +62,9 @@ class DatiCatastaliTerrenoItemResult(BaseModel):
     gen_data_eff: str = None
     derivanti_da: str = None
     annotazioni: str = None
+    mutazioneiniziale: int = None
+
+    eredi: List[ErediItemResult] = []
 
 
 class TitolareItemResult(BaseModel):
@@ -72,7 +84,6 @@ class TitolareItemResult(BaseModel):
     gen_progressivo: str = None
     gen_data_eff: str = None
     derivanti_da: str = None
-
 
 class VisuraItemResult(BaseModel):
     comune: str = None

@@ -5,9 +5,9 @@ class VisuraView:
     def select_codiceimmobile(flagstorico: bool, comune: str, codiceimmobile: int, tipoimmobile: str) -> str:
 
         if tipoimmobile == "T":
-            checktipo = " AND UN.TIPO_IMM ILIKE 'T'"
+            checktipo = " AND UN.TIPO_IMM = 'T'"
         elif tipoimmobile == "F":
-            checktipo = " AND UN.TIPO_IMM ILIKE 'F'"
+            checktipo = " AND UN.TIPO_IMM = 'F'"
         else:
             checktipo = ""
 
@@ -54,7 +54,7 @@ class VisuraView:
         ) UN
         WHERE
             UN.IMMOBILE = {codiceimmobile}
-            AND UN.CODICE ILIKE '{comune}'
+            AND UN.CODICE = '{comune}'
             {checktipo} {strdatafine}
         GROUP BY
             UN.CODICE,
@@ -137,7 +137,8 @@ class VisuraView:
             COALESCE(' EDIFICIO: ' || F.EDIFICIO, '') ||
             COALESCE(' SCALA: ' || F.SCALA, '') ||
             COALESCE(' PIANO: ' || F.PIANO_1, '') || COALESCE('-' || F.PIANO_2, '') || COALESCE('-' || F.PIANO_3, '') || COALESCE('-' || F.PIANO_4, '') ||
-            COALESCE(' INTERNO: ' || F.INTERNO_1, '') || COALESCE('-' || F.INTERNO_2, '') AS INDIRIZZO
+            COALESCE(' INTERNO: ' || F.INTERNO_1, '') || COALESCE('-' || F.INTERNO_2, '') AS INDIRIZZO,
+            F.MUTAZ_INIZ AS MUTAZIONEINIZIALE
         FROM
             CTCN.CUARCUIU F
         JOIN CTCN.CUIDENTI II ON
@@ -160,11 +161,11 @@ class VisuraView:
         LEFT JOIN CTCN.CUCODCAU X ON
             X.COD_CAUSA = F.GEN_CAUSA
         WHERE
-            F.CODICE ILIKE '{comune}'
+            F.CODICE = '{comune}'
             AND F.IMMOBILE = {codiceimmobile}
             AND LTRIM(II.FOGLIO::TEXT, '0'::TEXT) = '{foglio}'
             AND LTRIM(II.NUMERO::TEXT, '0'::TEXT) = '{particella}'
-            AND F.TIPO_IMM ILIKE 'F'
+            AND F.TIPO_IMM = 'F'
             {strdatafine}
         ORDER BY
             C.CODICE,
@@ -224,7 +225,8 @@ class VisuraView:
             COALESCE(X.DESCRIZION, T.GEN_CAUSA, '') AS GEN_CAUSA,
             COALESCE(TO_CHAR(TO_DATE(T.GEN_REGIST, 'DDMMYYYY'::TEXT), 'DD/MM/YYYY'), '') AS GEN_DATA_REG,
             COALESCE(T.GEN_NUMERO || '.' || T.GEN_PROGRE || '/' || T.GEN_ANNO, '') AS GEN_PROGRESSIVO,
-            COALESCE(TO_CHAR(TO_DATE(T.GEN_EFF, 'DDMMYYYY'::TEXT), 'DD/MM/YYYY'), '') AS GEN_DATA_EFF
+            COALESCE(TO_CHAR(TO_DATE(T.GEN_EFF, 'DDMMYYYY'::TEXT), 'DD/MM/YYYY'), '') AS GEN_DATA_EFF,
+            T.MUTAZ_INIZ AS MUTAZIONEINIZIALE
         FROM
             CTCN.CTPARTIC T
         JOIN CTCN.COMUNI C ON
@@ -236,11 +238,11 @@ class VisuraView:
         LEFT JOIN CTCN.CUCODCAU X ON
             X.COD_CAUSA = T.GEN_CAUSA
         WHERE
-            T.CODICE ILIKE '{comune}'
+            T.CODICE = '{comune}'
             AND T.IMMOBILE = {codiceimmobile}
             AND T.FOGLIO = '{foglio}'
             AND LTRIM(T.NUMERO::TEXT, '0'::TEXT) = '{particella}'
-            AND T.TIPO_IMM ILIKE 'T'
+            AND T.TIPO_IMM = 'T'
             {strdatafine}
         ORDER BY
             T.CODICE,
@@ -256,9 +258,9 @@ class VisuraView:
     def select_titolari(flagstorico: bool, comune: str, codiceimmobile: int, tipoimmobile: str) -> str:
 
         if tipoimmobile == "T":
-            checktipo = " AND TIPO_IMM ILIKE 'T'"
+            checktipo = " AND TIPO_IMM = 'T'"
         elif tipoimmobile == "F":
-            checktipo = " AND TIPO_IMM ILIKE 'F'"
+            checktipo = " AND TIPO_IMM = 'F'"
         else:
             checktipo = ""
 
@@ -367,70 +369,49 @@ class VisuraView:
         return sql_view
 
 
-    def select_codicesoggetto(flagstorico: bool, cs: int, tipoimmobile: str) -> str:
-
-        if tipoimmobile == "T":
-            checktipo = " AND UN.TIPO_IMMOBILE ILIKE 'Terreni'"
-        elif tipoimmobile == "F":
-            checktipo = " AND UN.TIPO_IMMOBILE ILIKE 'Fabbricati'"
-        else:
-            checktipo = ""
-
-        if not flagstorico:
-            strdatafine = " AND UN.DATA_FINE_F > ('NOW'::TEXT)::DATE"
-        else:
-            strdatafine = ""
+    def select_eredi_fabbricati(codiceimmobile: int, mutazioneiniziale: int) -> str:
 
         sql_view = \
         f"""
         SELECT
-            UN.TIPO_IMMOBILE AS TIPOIMMOBILE,
-            UN.FOGLIO,
-            UN.PARTICELLA,
-            UN.SUBALTERNO,
-            UN.IMMOBILE,
-            UN.DATA_FINE
+            DISTINCT
+            I.FOGLIO AS FOGLIO,
+            I.NUMERO AS PARTICELLA,
+            I.SUBALTERNO AS SUBALTERNO
         FROM
-            (
-            SELECT
-                VSF.TIPO_IMMOBILE,
-                VSF.FOGLIO,
-                VSF.PARTICELLA,
-                VSF.SUBALTERNO,
-                VSF.IMMOBILE,
-                VSF.SOGGETTO,
-                VSF.DATA_FINE,
-                VSF.DATA_FINE_F
-            FROM
-                CTCN.V_SOGGETTI_FABBRICATI VSF
-        UNION ALL
-            SELECT
-                VST.TIPO_IMMOBILE,
-                VST.FOGLIO,
-                VST.PARTICELLA,
-                VST.SUBALTERNO,
-                VST.IMMOBILE,
-                VST.SOGGETTO,
-                VST.DATA_FINE,
-                VST.DATA_FINE_F
-            FROM
-                CTCN.V_SOGGETTI_TERRENI VST 
-        ) UN
+            CTCN.CUARCUIU E
+        JOIN CTCN.CUIDENTI I ON
+            E.CODICE::TEXT = I.CODICE::TEXT
+            AND E.SEZIONE::TEXT = I.SEZIONE::TEXT
+            AND E.IMMOBILE = I.IMMOBILE
+            AND E.TIPO_IMM::TEXT = I.TIPO_IMM::TEXT
+            AND E.PROGRESSIV = I.PROGRESSIV
         WHERE
-            UN.SOGGETTO = {cs}
-            {checktipo} {strdatafine}
-        GROUP BY
-            TIPOIMMOBILE,
-            UN.DATA_FINE,
-            UN.FOGLIO,
-            UN.PARTICELLA,
-            UN.SUBALTERNO
+            E.IMMOBILE <> {codiceimmobile}
+            AND MUTAZ_INIZ = {mutazioneiniziale}
         ORDER BY
-            UN.TIPO_IMMOBILE,
-            UN.DATA_FINE DESC NULLS FIRST,
-            UN.FOGLIO,
-            UN.PARTICELLA,
-            UN.SUBALTERNO
+            I.FOGLIO,
+            I.NUMERO,
+            I.SUBALTERNO
         """
-        print(sql_view)
+        return sql_view
+
+
+    def select_eredi_terreni(codiceimmobile: int, mutazioneiniziale: int) -> str:
+
+        sql_view = \
+        f"""
+        SELECT
+            DISTINCT
+            FOGLIO AS FOGLIO,
+            NUMERO AS PARTICELLA
+        FROM
+            CTCN.CTPARTIC
+        WHERE
+            IMMOBILE <> {codiceimmobile}
+            AND MUTAZ_INIZ = {mutazioneiniziale}
+        ORDER BY
+            FOGLIO,
+            NUMERO
+        """
         return sql_view

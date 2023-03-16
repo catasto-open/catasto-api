@@ -43,20 +43,6 @@ async def visura(
         regex="^[a-zA-Z0-9_]*$",
         max_length=4
     ),
-    foglio: Optional[str] = Query(
-        None,
-        title="Foglio",
-        description="Ricerca per codice immobile",
-        regex="^[a-zA-Z0-9_]*$",
-        max_length=64
-    ),
-    particella: Optional[str] = Query(
-        None,
-        title="Particella",
-        description="Ricerca per codice immobile",
-        regex="^[a-zA-Z0-9_]*$",
-        max_length=64
-    ),
     tipoimmobile: Optional[str] = Query(
         None,
         title="Tipo Immobile",
@@ -69,11 +55,6 @@ async def visura(
         title="Codice Immobile",
         description="Ricerca per codice immobile"
     ),
-    codicesoggetto: Optional[str] = Query(
-        None,
-        title="Codice Soggetto",
-        description="Ricerca per codice soggetto"
-    ),
     flagricercastorica: bool = Query(
         False,
         title="Flag ricerca storica",
@@ -85,8 +66,6 @@ async def visura(
 
         if codiceimmobile:
             result = VisuraService(db).get_visura_by_codiceimmobile(flagricercastorica, comune, codiceimmobile, tipoimmobile)
-        elif codicesoggetto:
-            result = ImmobileService(db).get_immobili_by_codice_soggetto(flagricercastorica, comune, codicesoggetto, tipoimmobile)
         else:
             raise HTTPException(
                     status_code=422, 

@@ -224,6 +224,16 @@
                         <td colspan="5" class="label_colspanned">Partita</td>
                         <td colspan="8" class="value_colspanned">{{ dict_item['partita'] or ' ' }}</td>
                     </tr>
+                    {% if dict_item['partita'] == 'SOPPRESSA' and dict_item['eredi'] is not none %}
+                        <tr >
+                            <td colspan="5" class="label_colspanned">La soppressione ha generato i seguenti immobili</td>
+                            <td colspan="8" class="value_colspanned">
+                            {% for erede in dict_item['eredi'] %}
+                                [Foglio: {{ erede.foglio }} Particella: {{ erede.particella }} Sub.: {{ erede.subalterno }}]
+                            {% endfor %}
+                            </td>
+                        </tr>
+                    {% endif %}
                 {% endif %}
             </tbody>
         </table>
@@ -285,6 +295,27 @@
                         <td colspan="5" class="label_colspanned">Partita</td>
                         <td colspan="8" class="value_colspanned">{{ dict_item['partita'] or ' ' }}</td>
                     </tr>
+                {% endif %}
+                {% if dict_item['qualita'] == 'SOPPRESSO' and dict_item['eredi'] is not none %}
+                    <tr >
+                        <td colspan="5" class="label_colspanned">La soppressione ha generato i seguenti immobili</td>
+                        <td colspan="8" class="value_colspanned">
+                        {% for erede in dict_item['eredi'] %}
+                            [Foglio: {{ erede.foglio }} Particella: {{ erede.particella }}]
+                        {% endfor %}
+                        </td>
+                    </tr>
+                {% else %}
+                    {% if dict_item['eredi'] is not none %}
+                    <tr >
+                        <td colspan="5" class="label_colspanned">La variazione ha generato i seguenti immobili</td>
+                        <td colspan="8" class="value_colspanned">
+                        {% for erede in dict_item['eredi'] %}
+                            [Foglio: {{ erede.foglio }} Particella: {{ erede.particella }}]
+                        {% endfor %}
+                        </td>
+                    </tr>
+                    {% endif %}
                 {% endif %}
             </tbody>
         </table>
@@ -383,6 +414,16 @@
                         <td colspan="5" class="label_colspanned">Partita</td>
                         <td colspan="8" class="value_colspanned">{{ dict_item['partita'] or ' ' }}</td>
                     </tr>
+                    {% if dict_item['partita'] == 'SOPPRESSA' and dict_item['eredi'] is not none %}
+                    <tr >
+                        <td colspan="5" class="label_colspanned">La soppressione ha generato i seguenti immobili</td>
+                        <td colspan="8" class="value_colspanned">
+                        {% for erede in dict_item['eredi'] %}
+                            [Foglio: {{ erede.foglio }} Particella: {{ erede.particella }} Sub.: {{ erede.subalterno }}]
+                        {% endfor %}
+                        </td>
+                    </tr>
+                    {% endif %}
                 {% endif %}
             </tbody>
         </table>
@@ -391,7 +432,7 @@
 
     {% if dati_catastali_terreno_storico %}
     {% for dict_item in dati_catastali_terreno_storico %}
-        <h3>DATI TERRENO alla data: {{ dict_item['gen_data_reg'] }}</h3>
+        <h3>DATI TERRENO alla data: {{ dict_item['gen_data_reg'] }} </h3>
         <table class="styled-table">
             <thead>
                 <tr >
@@ -443,6 +484,27 @@
                         <td colspan="5" class="label_colspanned">Partita</td>
                         <td colspan="8" class="value_colspanned">{{ dict_item['partita'] or ' ' }}</td>
                     </tr>
+                {% endif %}
+                {% if dict_item['qualita'] == 'SOPPRESSO' and dict_item['eredi'] is not none %}
+                    <tr >
+                        <td colspan="5" class="label_colspanned">La soppressione ha generato i seguenti immobili</td>
+                        <td colspan="8" class="value_colspanned">
+                        {% for erede in dict_item['eredi'] %}
+                            [Foglio: {{ erede.foglio }} Particella: {{ erede.particella }}]
+                        {% endfor %}
+                        </td>
+                    </tr>
+                {% else %}
+                    {% if dict_item['eredi'] is not none %}
+                    <tr >
+                        <td colspan="5" class="label_colspanned">La variazione ha generato i seguenti immobili</td>
+                        <td colspan="8" class="value_colspanned">
+                        {% for erede in dict_item['eredi'] %}
+                            [Foglio: {{ erede.foglio }} Particella: {{ erede.particella }}]
+                        {% endfor %}
+                        </td>
+                    </tr>
+                    {% endif %}
                 {% endif %}
             </tbody>
         </table>

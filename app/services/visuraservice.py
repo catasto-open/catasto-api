@@ -2,7 +2,7 @@ from typing import List
 from app.services.main import AppService, AppQuery
 from app.models.visura import VisuraView
 from app.schemas.visura import (
-    TitolareItemResult, VisuraItem, DatiCatastaliFabbricatoItemResult, DatiCatastaliTerrenoItemResult
+    TitolareItemResult, VisuraItem, DatiCatastaliFabbricatoItemResult, DatiCatastaliTerrenoItemResult, ErediItemResult
 )
 from app.utils.service_result import ServiceResult
 
@@ -27,6 +27,10 @@ class VisuraQuery(AppQuery):
                 item_dict = DatiCatastaliFabbricatoItemResult(**item, by_alias=True).dict()
                 item_dict['derivanti_da'] = self.compile_dati_derivanti_da(item_dict['gen_tipo_nota'], item_dict['gen_descr'], item_dict['gen_causa'], item_dict['gen_data_reg'], item_dict['gen_progressivo'], item_dict['gen_data_eff'])
                 item_dict['progressivo'] = progressivo
+                if item_dict['partita'] == 'SOPPRESSA':
+                    item_dict['eredi'] = self.select_eredi_fabbricati(codiceimmobile, item_dict['mutazioneiniziale'])
+                else:
+                    item_dict['eredi'] = None
                 immobili_item.append(item_dict)
             return immobili_item
         return None
@@ -43,6 +47,7 @@ class VisuraQuery(AppQuery):
                 item_dict = DatiCatastaliTerrenoItemResult(**item, by_alias=True).dict()
                 item_dict['derivanti_da'] = self.compile_dati_derivanti_da(item_dict['gen_tipo_nota'], item_dict['gen_descr'], item_dict['gen_causa'], item_dict['gen_data_reg'], item_dict['gen_progressivo'], item_dict['gen_data_eff'])
                 item_dict['progressivo'] = progressivo
+                item_dict['eredi'] = self.select_eredi_terreni(codiceimmobile, item_dict['mutazioneiniziale'])
                 immobili_item.append(item_dict)
             return immobili_item
         return None
@@ -63,6 +68,22 @@ class VisuraQuery(AppQuery):
                 item_dict['derivanti_da'] = self.compile_dati_derivanti_da(item_dict['gen_tipo_nota'], item_dict['gen_descr'], item_dict['gen_causa'], item_dict['gen_data_reg'], item_dict['gen_progressivo'], item_dict['gen_data_eff'])
                 titolare_items[current_date or 0].append(item_dict)
             return titolare_items
+        return None
+
+    def select_eredi_fabbricati(self, codiceimmobile: int, mutazioneiniziale: int) -> List[ErediItemResult]:
+        eredi_results = self.db.execute(
+            VisuraView.select_eredi_fabbricati(codiceimmobile=codiceimmobile, mutazioneiniziale=mutazioneiniziale)
+        ).all()
+        if eredi_results:
+            return eredi_results
+        return None
+
+    def select_eredi_terreni(self, codiceimmobile: int, mutazioneiniziale: int) -> List[ErediItemResult]:
+        eredi_results = self.db.execute(
+            VisuraView.select_eredi_terreni(codiceimmobile=codiceimmobile, mutazioneiniziale=mutazioneiniziale)
+        ).all()
+        if eredi_results:
+            return eredi_results
         return None
 
     def select_codiceimmobile(self, flagstorico: bool, comune: str, codiceimmobile: int, tipoimmobile: str) -> VisuraItem:
