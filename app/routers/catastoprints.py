@@ -43,14 +43,14 @@ async def visura(
         regex="^[a-zA-Z0-9_]*$",
         max_length=4
     ),
-    tipoimmobile: Optional[str] = Query(
+    tipoimmobile: str = Query(
         None,
         title="Tipo Immobile",
-        description="Terreno (T) o Fabbricato",
+        description="Terreno (T) o Fabbricato (F)",
         regex="^[a-zA-Z]*$",
         max_length=1
     ),
-    codiceimmobile: Optional[int] = Query(
+    codiceimmobile: int = Query(
         None,
         title="Codice Immobile",
         description="Ricerca per codice immobile"
@@ -127,7 +127,7 @@ async def immobili(
     tipoimmobile: Optional[str] = Query(
         None,
         title="Tipo Immobile",
-        description="Terreno (T) o Fabbricato (F)",
+        description="Terreno (T) o Fabbricato (F) (F)",
         regex="^[a-zA-Z]*$",
         max_length=1
     ),

@@ -93,15 +93,15 @@ class VisuraView:
             F.PROGRESSIV AS PROGRESSIVO,
             LTRIM(II.FOGLIO::TEXT, '0'::TEXT) AS FOGLIO,
             LTRIM(II.NUMERO::TEXT, '0'::TEXT) AS PARTICELLA,
-            LTRIM(II.SUBALTERNO::TEXT, '0'::TEXT) AS SUBALTERNO,
-            LTRIM(F.ZONA::TEXT, '0'::TEXT) AS ZONA_CENSUARIA,
+            COALESCE(LTRIM(II.SUBALTERNO::TEXT, '0'::TEXT), '') AS SUBALTERNO,
+            COALESCE(LTRIM(F.ZONA::TEXT, '0'::TEXT), ''::TEXT) AS ZONA_CENSUARIA,
             CASE
                 WHEN COALESCE(F.CATEGORIA, ''::CHARACTER VARYING)::TEXT <> ''::TEXT THEN (SUBSTR(F.CATEGORIA::TEXT,
                 1,
                 1) || '/'::TEXT) || LTRIM(SUBSTR(F.CATEGORIA::TEXT, 2, 2), '0'::TEXT)
                 ELSE ''::TEXT
             END AS CATEGORIA,
-            LTRIM(F.CLASSE::TEXT, '0'::TEXT) AS CLASSE,
+            COALESCE(LTRIM(F.CLASSE::TEXT, '0'::TEXT), ''::TEXT) AS CLASSE,
             CASE
                 WHEN COALESCE(F.CONSISTENZ, ''::CHARACTER VARYING)::TEXT <> ''::TEXT THEN
                 CASE
@@ -202,7 +202,7 @@ class VisuraView:
             END AS COMUNE,
             T.FOGLIO,
             LTRIM(T.NUMERO::TEXT, '0'::TEXT) AS PARTICELLA,
-            T.SUBALTERNO,
+            COALESCE(T.SUBALTERNO, '') AS SUBALTERNO,
             UPPER(Q.QUALITA::TEXT) AS QUALITA,
             LTRIM(T.CLASSE::TEXT, '0'::TEXT) AS CLASSE,
             T.ETTARI AS SUPERFICE_HA,
