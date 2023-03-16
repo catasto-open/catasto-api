@@ -10,6 +10,11 @@ class ErediItemResult(BaseModel):
     particella: str = None
     subalterno: str = None
 
+class UtilitaItemResult(BaseModel):
+    foglio: str = None
+    particella: str = None
+    subalterno: str = None
+
 class DatiCatastaliFabbricatoItemResult(BaseModel):
     data_decorrenza: date = None
     progressivo: int = None
@@ -37,7 +42,7 @@ class DatiCatastaliFabbricatoItemResult(BaseModel):
     mutazioneiniziale: int = None
 
     eredi: List[ErediItemResult] = []
-
+    utilita: List[UtilitaItemResult] = []
 
 class DatiCatastaliTerrenoItemResult(BaseModel):
     data_decorrenza: date = None

@@ -2,7 +2,7 @@ from typing import List
 from app.services.main import AppService, AppQuery
 from app.models.visura import VisuraView
 from app.schemas.visura import (
-    TitolareItemResult, VisuraItem, DatiCatastaliFabbricatoItemResult, DatiCatastaliTerrenoItemResult, ErediItemResult
+    TitolareItemResult, VisuraItem, DatiCatastaliFabbricatoItemResult, DatiCatastaliTerrenoItemResult, ErediItemResult, UtilitaItemResult
 )
 from app.utils.service_result import ServiceResult
 
@@ -31,6 +31,7 @@ class VisuraQuery(AppQuery):
                     item_dict['eredi'] = self.select_eredi_fabbricati(codiceimmobile, item_dict['mutazioneiniziale'])
                 else:
                     item_dict['eredi'] = None
+                item_dict['utilita'] = self.select_utilita(codiceimmobile, item_dict['progressivo'])
                 immobili_item.append(item_dict)
             return immobili_item
         return None
@@ -84,6 +85,14 @@ class VisuraQuery(AppQuery):
         ).all()
         if eredi_results:
             return eredi_results
+        return None
+
+    def select_utilita(self, codiceimmobile: int, progressivo: int) -> List[ErediItemResult]:
+        utilita_results = self.db.execute(
+            VisuraView.select_utilita(codiceimmobile=codiceimmobile, progressivo=progressivo)
+        ).all()
+        if utilita_results:
+            return utilita_results
         return None
 
     def select_codiceimmobile(self, flagstorico: bool, comune: str, codiceimmobile: int, tipoimmobile: str) -> VisuraItem:

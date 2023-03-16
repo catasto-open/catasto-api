@@ -235,6 +235,16 @@
                         </tr>
                     {% endif %}
                 {% endif %}
+                {% if dict_item['utilita'] is not none %}
+                        <tr >
+                            <td colspan="5" class="label_colspanned">Utilit&agrave; comune di</td>
+                            <td colspan="8" class="value_colspanned">
+                            {% for utile in dict_item['utilita'] %}
+                                [Foglio: {{ utile.foglio }} Particella: {{ utile.particella }} Sub.: {{ utile.subalterno }}]
+                            {% endfor %}
+                            </td>
+                        </tr>
+                {% endif %}
             </tbody>
         </table>
     {% endfor %}
@@ -424,6 +434,16 @@
                         </td>
                     </tr>
                     {% endif %}
+                {% endif %}
+                {% if dict_item['utilita'] is not none %}
+                    <tr >
+                        <td colspan="5" class="label_colspanned">Utilit&agrave; comune di</td>
+                        <td colspan="8" class="value_colspanned">
+                        {% for utile in dict_item['utilita'] %}
+                            [Foglio: {{ utile.foglio }} Particella: {{ utile.particella }} Sub.: {{ utile.subalterno }}]
+                        {% endfor %}
+                        </td>
+                    </tr>
                 {% endif %}
             </tbody>
         </table>

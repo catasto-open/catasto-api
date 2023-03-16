@@ -415,3 +415,24 @@ class VisuraView:
             NUMERO
         """
         return sql_view
+
+    def select_utilita(codiceimmobile: int, progressivo: int) -> str:
+
+        sql_view = \
+        f"""
+        SELECT
+            DISTINCT
+            FOGLIO AS FOGLIO,
+            NUMERO AS PARTICELLA,
+            COALESCE(SUBALTERNO, '-') AS SUBALTERNO
+        FROM
+            CTCN.CUUTILIT
+        WHERE
+            IMMOBILE = {codiceimmobile}
+            AND PROGRESSIV = {progressivo}
+        ORDER BY
+            FOGLIO,
+            NUMERO,
+            SUBALTERNO
+        """
+        return sql_view
