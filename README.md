@@ -98,7 +98,7 @@ Note that you need to replace `<your-docker-username>` with your Docker Hub user
 ## Environment Variables
 
 |Variable Name                    |Description                         |
-|.................................|....................................|
+|---------------------------------|------------------------------------|
 |ENV_STATE                        |Environment state (e.g., dev, prod) |
 |DEV_OPENAM_CLIENT_ID             |OpenAM client ID                    |
 |DEV_OPENAM_CLIENT_SECRET         |OpenAM client secret                |
