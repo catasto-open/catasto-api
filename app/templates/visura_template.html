@@ -1,0 +1,537 @@
+<html>
+<head>
+    <title>Visura</title>
+    <style>
+        body {
+            font-size: 0.8em;
+            font-family: Arial,sans-serif;
+        }
+        h1 {
+            font-size: 1.5em;
+            font-family: Arial,sans-serif;
+        }
+        .styled-table {
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 1em;
+            font-family: sans-serif;
+            min-width: 400px;
+        }
+        .styled-table thead tr {
+            background-color: #dbd8d8;
+            color: #000000;
+            text-align: left;
+        }
+        .styled-table-head td {
+            background-color: #ffffff;
+            color: #000000;
+            text-align: left;
+            font-weight: bold;
+        }
+        .styled-table th,
+        .styled-table td {
+            padding: 8px 10px;
+            border: 1px solid #000000;
+        }
+        .second_row td {
+            background-color: #dbd8d8;
+            color: #000000;
+        }
+        .label_colspanned {
+            background-color: #dbd8d8;
+            color: #000000;
+            font-size: 1em;
+            font-weight: bold;
+        }
+        .value_colspanned {
+            background-color: #ffffff;
+            font-size: 0.9em;
+        }
+        .styled-table tbody tr {
+            border-bottom: 1px solid #000000;
+        }
+
+        .styled-table tbody td {
+            border: 1px solid #000000;
+        }
+
+        .styled-table tbody tr:nth-of-type(even) {
+            background-color: #dbd8d8;
+        }
+
+        .styled-table tbody tr:last-of-type {
+            border-bottom: 2px solid #000000;
+        }
+
+        .header {
+        width: 100%;
+        padding:20px 0;
+        text-align: left;
+        background: #ffffff;
+        color: #000000;
+        border-bottom: 2px solid #960630;
+        }
+
+        .red-line {
+            width: 100%;
+            padding:5px 0;
+            background: #ffffff;
+            border-bottom: 2px solid #960630;
+        }
+
+        .header2 {
+        width: 100%;
+        padding:2px;
+        height: 10px;
+        text-align: right;
+        background: #ffffff;
+        color: #000000;
+        }
+
+
+        .btn-bgstroke {
+        font-size: 20px;
+        display: inline-block;
+        border: 1px solid white;
+        padding: 8px 15px;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: 300;
+        margin-top: 20px; 
+        }
+
+        .btn-bgstroke:hover {
+        background-color: white;
+        color: #33cccc;
+        }
+
+        thead { display: table-header-group; }
+        tfoot { display: table-row-group; }
+        tr { page-break-inside: avoid; }
+    </style>
+</head>
+<body>
+    <div class="red-line">&nbsp;</div>
+    <h1>Visura {% if storico %} storica {% endif %} per {{tipoImmobile}}</h1>
+
+    {% if daticatastali %}
+        <h3>DATI CATASTALI</h3>
+        <table class="styled-table">
+            <thead>
+                <tr >
+                    <th style="width: 20%;">Foglio</th>
+                    <th style="width: 20%;">Particella</th>
+                    <th style="width: 20%;">Subalterno</th>
+                    <th style="width: 40%;">Attualit&agrave;</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{% if daticatastali['foglio'] is not none %} {{ daticatastali['foglio'] }}  {% endif %}</td>
+                    <td>{% if daticatastali['particella'] is not none %} {{ daticatastali['particella'] }}  {% endif %}</td>
+                    <td>{% if daticatastali['subalterno'] is not none %} {{ daticatastali['subalterno'] }}  {% endif %}</td>
+                    {% if daticatastali['data_fine'] %}
+                        <td>No</td>
+                    {% else %}
+                        <td>S&igrave;</td>
+                    {% endif %}
+                </tr>
+            </tbody>
+        </table>
+    {% endif %}
+
+    <h3>INTESTATI ATTUALI</h3>
+    {% if titolari_attuali is none and titolari_attuali[1] is not none %}
+        <p>Dato non presente</p>
+    {% endif %}
+    {% if titolari_attuali is not none and titolari_attuali[1] is not none %}
+        <table class="styled-table">
+            <thead>
+                <tr >
+                    <th style="width: 20%;">Nominativo</th>
+                    <th style="width: 20%;">Codice fiscale</th>
+                    <th style="width: 20%;">Diritti e oneri reali</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for dict_item in titolari_attuali[0] %}
+                <tr>
+                    <td>{{ dict_item['nominativo'] }}</td>
+                    <td>{{ dict_item['codice_fiscale'] }}</td>
+                    <td>{{ dict_item['titolo'] or ' ' }} {{ dict_item['quota'] or ' ' }}</td>
+                </tr>
+                <tr>
+                    <td  class="label_colspanned">Derivanti da</td>
+                    <td colspan="2" class="value_colspanned">{{ dict_item['derivanti_da'] or ' ' }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+
+    {% if dati_catastali_fabbricato_attuali %}
+    <h3>DATI IMMOBILE</h3>
+    {% for dict_item in dati_catastali_fabbricato_attuali %}
+        <h4>Situazione immobile alla data: {{ dict_item['gen_data_reg'] }}</h4>
+        <table class="styled-table">
+            <tbody>
+                <tr class="styled-table-head">
+                    <td style="width: 5%; vertical-align: top;" rowspan="2" class="second_row">Numero</td>
+                    <td style="width: 30%;" colspan="4" class="second_row">Dati identificativi</td>
+                    <td style="width: 45%;" colspan="7" class="second_row">Dati classamento</td>
+                    <td style="width: 20%; vertical-align: top;" rowspan="2" class="second_row">Dati derivanti da</td>
+                </tr>
+                <tr class="styled-table-head">
+                    <td>Sezione</td>
+                    <td>Foglio</td>
+                    <td>Particella</td>
+                    <td>Sub.</td>
+                    <td>Zona cens.</td>
+                    <td>Micro zona</td>
+                    <td>Categoria</td>
+                    <td>Classe</td>
+                    <td>Consistenza</td>
+                    <td>Superficie catastale</td>
+                    <td>Rendita</td>
+                </tr>
+                <tr >
+                    <td>{{  dict_item['progressivo'] }}</td>
+                    <td>{{  dict_item['sezione'] }}</td>
+                    <td>{{  dict_item['foglio'] }}</td>
+                    <td>{{  dict_item['particella'] }}</td>
+                    <td>{{  dict_item['subalterno'] }}</td>
+                    <td>{{  dict_item['zona_censuaria'] }}</td>
+                    <td>{{  dict_item['microzona'] or ' ' }}</td>
+                    <td>{{  dict_item['categoria'] }}</td>
+                    <td>{{  dict_item['classe'] }}</td>
+                    <td>{{  dict_item['consistenza'] }}</td>
+                    <td>{% if dict_item['superficie'] is not none %} {{  dict_item['superficie'] }} mq {% endif %}</td>
+                    <td>{% if dict_item['rendita'] is not none %}Euro {{  dict_item['rendita'] }} {% endif %}</td>
+                    <td>{{  dict_item['derivanti_da'] or ' ' }}</td>
+                </tr>
+                <tr >
+                    <td colspan="5" class="label_colspanned">Indirizzo</td>
+                    <td colspan="8" class="value_colspanned">{{ dict_item['indirizzo'] or ' ' }}</td>
+                </tr>
+                {% if dict_item['annotazioni'] is not none %}
+                    <tr >
+                        <td colspan="5" class="label_colspanned">Annotazioni</td>
+                        <td colspan="8" class="value_colspanned">{{ dict_item['annotazioni'] or ' ' }}</td>
+                    </tr>
+                {% endif %}
+                {% if dict_item['partita'] is not none %}
+                    <tr >
+                        <td colspan="5" class="label_colspanned">Partita</td>
+                        <td colspan="8" class="value_colspanned">{{ dict_item['partita'] or ' ' }}</td>
+                    </tr>
+                    {% if dict_item['partita'] == 'SOPPRESSA' and dict_item['eredi'] is not none %}
+                        <tr >
+                            <td colspan="5" class="label_colspanned">La soppressione ha generato i seguenti immobili</td>
+                            <td colspan="8" class="value_colspanned">
+                            {% for erede in dict_item['eredi'] %}
+                                [Foglio: {{ erede.foglio }} Particella: {{ erede.particella }} Sub.: {{ erede.subalterno }}]
+                            {% endfor %}
+                            </td>
+                        </tr>
+                    {% endif %}
+                {% endif %}
+                {% if dict_item['utilita'] is not none %}
+                        <tr >
+                            <td colspan="5" class="label_colspanned">Utilit&agrave; comune di</td>
+                            <td colspan="8" class="value_colspanned">
+                            {% for utile in dict_item['utilita'] %}
+                                [Foglio: {{ utile.foglio }} Particella: {{ utile.particella }} Sub.: {{ utile.subalterno }}]
+                            {% endfor %}
+                            </td>
+                        </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    {% endfor %}
+    {% endif %}
+
+    {% if dati_catastali_terreno_attuali %}
+    <h3>DATI TERRENO</h3>
+    {% for dict_item in dati_catastali_terreno_attuali %}
+        <h4>Situazione immobile alla data: {{ dict_item['gen_data_reg'] }}</h4>
+        <table class="styled-table">
+            <thead>
+                <tr >
+                    <th style="width: 5%; vertical-align: top;" rowspan="3" class="second_row">Numero</th>
+                    <th style="width: 30%;" colspan="4" class="second_row">Dati identificativi</th>
+                    <th style="width: 45%;" colspan="6" class="second_row">Dati classamento</th>
+                    <th style="width: 20%; vertical-align: top;" rowspan="3" class="second_row">Dati derivanti da</th>
+                </tr>
+                <tr >
+                    <th style="vertical-align: top;" rowspan="2">Sezione</th>
+                    <th style="vertical-align: top;" rowspan="2">Foglio</th>
+                    <th style="vertical-align: top;" rowspan="2">Particella</th>
+                    <th style="vertical-align: top;" rowspan="2">Sub.</th>
+                    <th style="vertical-align: top;" rowspan="2">Qualit&agrave; classe</th>
+                    <th class="second_row" colspan="3">Superficie</th>
+                    <th class="second_row" colspan="2">Reddito</th>
+                </tr>
+                <tr >
+                    <th>ha</th>
+                    <th>are</th>
+                    <th>ca</th>
+                    <th>Dominicale</th>
+                    <th>Agrario</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr >
+                    <td>{{  dict_item['progressivo'] }}</td>
+                    <td>{{  dict_item['sezione'] }}</td>
+                    <td>{{  dict_item['foglio'] }}</td>
+                    <td>{{  dict_item['particella'] }}</td>
+                    <td>{{  dict_item['subalterno'] }}</td>
+                    <td>{{  dict_item['qualita'] }} {{  dict_item['classe'] }}</td>
+                    <td>{{  dict_item['superfice_ha'] or ' ' }}</td>
+                    <td>{{  dict_item['superfice_are'] }}</td>
+                    <td>{{  dict_item['superfice_ca'] }}</td>
+                    <td>{% if dict_item['reddito_dominicale'] is not none %}Euro {{  dict_item['reddito_dominicale'] }} {% endif %}</td>
+                    <td>{% if dict_item['reddito_agrario'] is not none %}Euro {{  dict_item['reddito_agrario'] }} {% endif %}</td>
+                    <td>{{  dict_item['derivanti_da'] or ' ' }}</td>
+                </tr>
+                {% if dict_item['annotazioni'] is not none %}
+                    <tr >
+                        <td colspan="5" class="label_colspanned">Annotazioni</td>
+                        <td colspan="8" class="value_colspanned">{{ dict_item['annotazioni'] or ' ' }}</td>
+                    </tr>
+                {% endif %}
+                {% if dict_item['partita'] is not none %}
+                    <tr >
+                        <td colspan="5" class="label_colspanned">Partita</td>
+                        <td colspan="8" class="value_colspanned">{{ dict_item['partita'] or ' ' }}</td>
+                    </tr>
+                {% endif %}
+                {% if dict_item['qualita'] == 'SOPPRESSO' and dict_item['eredi'] is not none %}
+                    <tr >
+                        <td colspan="5" class="label_colspanned">La soppressione ha generato i seguenti immobili</td>
+                        <td colspan="8" class="value_colspanned">
+                        {% for erede in dict_item['eredi'] %}
+                            [Foglio: {{ erede.foglio }} Particella: {{ erede.particella }}]
+                        {% endfor %}
+                        </td>
+                    </tr>
+                {% else %}
+                    {% if dict_item['eredi'] is not none %}
+                    <tr >
+                        <td colspan="5" class="label_colspanned">La variazione ha generato i seguenti immobili</td>
+                        <td colspan="8" class="value_colspanned">
+                        {% for erede in dict_item['eredi'] %}
+                            [Foglio: {{ erede.foglio }} Particella: {{ erede.particella }}]
+                        {% endfor %}
+                        </td>
+                    </tr>
+                    {% endif %}
+                {% endif %}
+            </tbody>
+        </table>
+    {% endfor %}
+    {% endif %}
+    {% if storico %}
+    <br/>
+    <h2>Dati dello storico</h2>
+    {% if titolari_storico is not none %}
+    {% for date_block in titolari_storico %}
+    {% if date_block != 0 and titolari_storico[date_block] is not none and titolari_storico[date_block][0] is not none %}
+    <h3>INTESTATI fino alla data {{ date_block }}</h3>
+    <table class="styled-table">
+        <thead>
+            <tr >
+                <th style="width: 20%;">Nominativo</th>
+                <th style="width: 20%;">Codice fiscale</th>
+                <th style="width: 20%;">Diritti e oneri reali</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for dict_item in titolari_storico[date_block] %}
+            <tr>
+                <td class="value_colspanned">{{ dict_item['nominativo'] }}</td>
+                <td class="value_colspanned">{{ dict_item['codice_fiscale'] }}</td>
+                <td class="value_colspanned">{{ dict_item['titolo'] or ' ' }} {{ dict_item['quota'] or ' ' }}</td>
+            </tr>
+            <tr>
+                <td  class="label_colspanned">Dalla data</td>
+                <td colspan="2" class="value_colspanned">{{ dict_item['data_decorrenza'] or ' ' }}</td>
+            </tr>
+            <tr>
+                <td  class="label_colspanned">Derivanti da</td>
+                <td colspan="2" class="value_colspanned">{{ dict_item['derivanti_da'] or ' ' }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+    {% endfor %}
+    {% endif %}
+
+    {% if dati_catastali_fabbricato_storico %}
+    {% for dict_item in dati_catastali_fabbricato_storico %}
+        <h3>DATI IMMOBILE alla data: {{ dict_item['gen_data_reg'] }}</h3>
+        <table class="styled-table">
+            <thead>
+                <tr >
+                    <th style="width: 5%; vertical-align: top;" rowspan="2" class="second_row">Numero</th>
+                    <th style="width: 30%;" colspan="4" class="second_row">Dati identificativi</th>
+                    <th style="width: 45%;" colspan="7" class="second_row">Dati classamento</th>
+                    <th style="width: 20%; vertical-align: top;" rowspan="2" class="second_row">Dati derivanti da</th>
+                </tr>
+                <tr >
+                    <th>Sezione</th>
+                    <th>Foglio</th>
+                    <th>Particella</th>
+                    <th>Sub.</th>
+                    <th>Zona cens.</th>
+                    <th>Micro zona</th>
+                    <th>Categoria</th>
+                    <th>Classe</th>
+                    <th>Consistenza</th>
+                    <th>Superficie catastale</th>
+                    <th>Rendita</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr >
+                    <td>{{  dict_item['progressivo'] }}</td>
+                    <td>{{  dict_item['sezione'] }}</td>
+                    <td>{{  dict_item['foglio'] }}</td>
+                    <td>{{  dict_item['particella'] }}</td>
+                    <td>{{  dict_item['subalterno'] }}</td>
+                    <td>{{  dict_item['zona_censuaria'] }}</td>
+                    <td>{{  dict_item['microzona'] or ' ' }}</td>
+                    <td>{{  dict_item['categoria'] }}</td>
+                    <td>{{  dict_item['classe'] }}</td>
+                    <td>{{  dict_item['consistenza'] }}</td>
+                    <td>{% if dict_item['superficie'] is not none %} {{  dict_item['superficie'] }} mq {% endif %}</td>
+                    <td>{% if dict_item['rendita'] is not none %}Euro {{  dict_item['rendita'] }} {% endif %}</td>
+                    <td>{{  dict_item['derivanti_da'] or ' ' }}</td>
+                </tr>
+                <tr >
+                    <td colspan="5" class="label_colspanned">Indirizzo</td>
+                    <td colspan="8" class="value_colspanned">{{ dict_item['indirizzo'] or ' ' }}</td>
+                </tr>
+                {% if dict_item['annotazioni'] is not none %}
+                    <tr >
+                        <td colspan="5" class="label_colspanned">Annotazioni</td>
+                        <td colspan="8" class="value_colspanned">{{ dict_item['annotazioni'] or ' ' }}</td>
+                    </tr>
+                {% endif %}
+                {% if dict_item['partita'] is not none %}
+                    <tr >
+                        <td colspan="5" class="label_colspanned">Partita</td>
+                        <td colspan="8" class="value_colspanned">{{ dict_item['partita'] or ' ' }}</td>
+                    </tr>
+                    {% if dict_item['partita'] == 'SOPPRESSA' and dict_item['eredi'] is not none %}
+                    <tr >
+                        <td colspan="5" class="label_colspanned">La soppressione ha generato i seguenti immobili</td>
+                        <td colspan="8" class="value_colspanned">
+                        {% for erede in dict_item['eredi'] %}
+                            [Foglio: {{ erede.foglio }} Particella: {{ erede.particella }} Sub.: {{ erede.subalterno }}]
+                        {% endfor %}
+                        </td>
+                    </tr>
+                    {% endif %}
+                {% endif %}
+                {% if dict_item['utilita'] is not none %}
+                    <tr >
+                        <td colspan="5" class="label_colspanned">Utilit&agrave; comune di</td>
+                        <td colspan="8" class="value_colspanned">
+                        {% for utile in dict_item['utilita'] %}
+                            [Foglio: {{ utile.foglio }} Particella: {{ utile.particella }} Sub.: {{ utile.subalterno }}]
+                        {% endfor %}
+                        </td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    {% endfor %}
+    {% endif %}
+
+    {% if dati_catastali_terreno_storico %}
+    {% for dict_item in dati_catastali_terreno_storico %}
+        <h3>DATI TERRENO alla data: {{ dict_item['gen_data_reg'] }} </h3>
+        <table class="styled-table">
+            <thead>
+                <tr >
+                    <th style="width: 5%; vertical-align: top;" rowspan="3" class="second_row">Numero</th>
+                    <th style="width: 30%;" colspan="4" class="second_row">Dati identificativi</th>
+                    <th style="width: 45%;" colspan="6" class="second_row">Dati classamento</th>
+                    <th style="width: 20%; vertical-align: top;" rowspan="3" class="second_row">Dati derivanti da</th>
+                </tr>
+                <tr >
+                    <th style="vertical-align: top;" rowspan="2">Sezione</th>
+                    <th style="vertical-align: top;" rowspan="2">Foglio</th>
+                    <th style="vertical-align: top;" rowspan="2">Particella</th>
+                    <th style="vertical-align: top;" rowspan="2">Sub.</th>
+                    <th style="vertical-align: top;" rowspan="2">Qualit&agrave; classe</th>
+                    <th class="second_row" colspan="3">Superficie</th>
+                    <th class="second_row" colspan="2">Reddito</th>
+                </tr>
+                <tr >
+                    <th>ha</th>
+                    <th>are</th>
+                    <th>ca</th>
+                    <th>Dominicale</th>
+                    <th>Agrario</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr >
+                    <td>{{  dict_item['progressivo'] }}</td>
+                    <td>{{  dict_item['sezione'] }}</td>
+                    <td>{{  dict_item['foglio'] }}</td>
+                    <td>{{  dict_item['particella'] }}</td>
+                    <td>{{  dict_item['subalterno'] }}</td>
+                    <td>{{  dict_item['qualita'] }} {{  dict_item['classe'] }}</td>
+                    <td>{{  dict_item['superfice_ha'] or ' ' }}</td>
+                    <td>{{  dict_item['superfice_are'] }}</td>
+                    <td>{{  dict_item['superfice_ca'] }}</td>
+                    <td>{% if dict_item['reddito_dominicale'] is not none %}Euro {{  dict_item['reddito_dominicale'] }} {% endif %}</td>
+                    <td>{% if dict_item['reddito_agrario'] is not none %}Euro {{  dict_item['reddito_agrario'] }} {% endif %}</td>
+                    <td>{{  dict_item['derivanti_da'] or ' ' }}</td>
+                </tr>
+                {% if dict_item['annotazioni'] is not none %}
+                    <tr >
+                        <td colspan="5" class="label_colspanned">Annotazioni</td>
+                        <td colspan="8" class="value_colspanned">{{ dict_item['annotazioni'] or ' ' }}</td>
+                    </tr>
+                {% endif %}
+                {% if dict_item['partita'] is not none %}
+                    <tr >
+                        <td colspan="5" class="label_colspanned">Partita</td>
+                        <td colspan="8" class="value_colspanned">{{ dict_item['partita'] or ' ' }}</td>
+                    </tr>
+                {% endif %}
+                {% if dict_item['qualita'] == 'SOPPRESSO' and dict_item['eredi'] is not none %}
+                    <tr >
+                        <td colspan="5" class="label_colspanned">La soppressione ha generato i seguenti immobili</td>
+                        <td colspan="8" class="value_colspanned">
+                        {% for erede in dict_item['eredi'] %}
+                            [Foglio: {{ erede.foglio }} Particella: {{ erede.particella }}]
+                        {% endfor %}
+                        </td>
+                    </tr>
+                {% else %}
+                    {% if dict_item['eredi'] is not none %}
+                    <tr >
+                        <td colspan="5" class="label_colspanned">La variazione ha generato i seguenti immobili</td>
+                        <td colspan="8" class="value_colspanned">
+                        {% for erede in dict_item['eredi'] %}
+                            [Foglio: {{ erede.foglio }} Particella: {{ erede.particella }}]
+                        {% endfor %}
+                        </td>
+                    </tr>
+                    {% endif %}
+                {% endif %}
+            </tbody>
+        </table>
+        {% endfor %}
+    {% endif %}
+
+{% endif %}
+</body>
+
+</html>

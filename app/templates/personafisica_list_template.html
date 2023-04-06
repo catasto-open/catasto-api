@@ -1,0 +1,139 @@
+<html>
+<head>
+    <title>Visura</title>
+    <style>
+        body {
+            font-size: 0.9em;
+            font-family: Arial,sans-serif;
+        }
+        .styled-table {
+            border-collapse: collapse;
+            margin: 25px 0;
+            font-size: 1em;
+            font-family: sans-serif;
+            min-width: 400px;
+        }
+        .styled-table thead tr {
+            background-color: #dbd8d8;
+            color: #000000;
+            text-align: left;
+        }
+        .styled-table-head td {
+            background-color: #ffffff;
+            color: #000000;
+            text-align: left;
+            font-weight: bold;
+        }
+        .styled-table th,
+        .styled-table td {
+            padding: 12px 15px;
+            border: 1px solid #000000;
+        }
+        .second_row td {
+            background-color: #dbd8d8;
+            color: #000000;
+        }
+        .label_colspanned {
+            background-color: #dbd8d8;
+            color: #000000;
+            font-size: 1em;
+            font-weight: bold;
+        }
+        .value_colspanned {
+            background-color: #ffffff;
+            font-size: 0.9em;
+        }
+        .styled-table tbody tr {
+            border-bottom: 1px solid #000000;
+        }
+
+        .styled-table tbody td {
+            border: 1px solid #000000;
+        }
+
+        .styled-table tbody tr:nth-of-type(even) {
+            background-color: #dbd8d8;
+        }
+
+        .styled-table tbody tr:last-of-type {
+            border-bottom: 2px solid #000000;
+        }
+
+        .header {
+        width: 100%;
+        padding:30px 0;
+        text-align: left;
+        background: #ffffff;
+        color: #000000;
+        border-bottom: 2px solid #960630;
+        }
+
+        .header2 {
+        width: 100%;
+        padding:2px;
+        text-align: right;
+        background: #ffffff;
+        color: #000000;
+        }
+
+
+        .btn-bgstroke {
+        font-size: 20px;
+        display: inline-block;
+        border: 1px solid white;
+        padding: 10px 20px;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: 300;
+        margin-top: 20px; 
+        }
+
+        .btn-bgstroke:hover {
+        background-color: white;
+        color: #33cccc;
+        }
+
+        .red-line {
+            width: 100%;
+            padding:5px 0;
+            background: #ffffff;
+            border-bottom: 2px solid #960630;
+        }
+
+        thead { display: table-header-group; }
+        tfoot { display: table-row-group; }
+        tr { page-break-inside: avoid; }
+    </style>
+</head>
+<body>
+    <div class="red-line">&nbsp;</div>
+    <h1>Lista Persone Fisiche</h1>
+
+    <table class="styled-table">
+        <thead>
+            <tr >
+                <th style="width: 15%;">Cognome</th>
+                <th style="width: 15%;">Nome</th>
+                <th style="width: 5%;">Genere</th>
+                <th style="width: 10%;">Data di nascita</th>
+                <th style="width: 30%;">Luogo di nascita</th>
+                <th style="width: 15%;">Codice fiscale</th>
+                <th style="width: 10%;">Codice soggetto</th>
+            </tr>
+        </thead>
+        {% for dict_item in items %}
+        <tr>
+            <td>{{ dict_item['cognome'] }}</td>
+            <td>{{ dict_item['nome'] }}</td>
+            <td>{{ dict_item['genere'] }}</td>
+            <td>{{ dict_item['datadinascita'] }}</td>
+            <td>{{ dict_item['comune'] }}</td>
+            <td>{{ dict_item['codfiscale'] }}</td>
+            <td>{{ dict_item['soggetto'] }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+</body>
+
+</html>
