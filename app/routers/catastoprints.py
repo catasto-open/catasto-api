@@ -403,8 +403,6 @@ async def visuraJSON(
     ),
     db: get_db = Depends()):
 
-        # username = utente.sub
-
         if codiceimmobile:
             result = VisuraService(db).get_visura_by_codiceimmobile(flagricercastorica, comune, codiceimmobile, tipoimmobile)
         else:
@@ -413,12 +411,6 @@ async def visuraJSON(
                     detail="Dati input non validi")
 
         if result:
-            # try:
-            #     return generate_print_pdf("Visura", result, username, data_aggiornamento)
-            # except BaseException:
-            #     raise HTTPException(
-            #         status_code=500, 
-            #         detail="Template non trovato")
             return result
         else:
             raise HTTPException(
