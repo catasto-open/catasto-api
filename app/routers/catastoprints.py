@@ -376,7 +376,7 @@ async def persone_giuridiche(
 
 @router.get("/dati/visura", response_class=JSONResponse)
 async def visuraJSON(
-    utente: OpenAMIDToken = Security(auth.authorized),
+#    utente: OpenAMIDToken = Security(auth.authorized),
     comune: Optional[str] = Query(
         "H501",
         title="Comune",
