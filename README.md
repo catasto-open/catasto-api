@@ -1,6 +1,6 @@
 # Catasto API
 
-This repository contains the source code for the GeoRoma catasto API, which is written in Python using the FastAPI framework. The API is designed to generate cadastral documents, such as visure, and depends on the Catasto Postgres database available [here](https://github.com/catasto-open/catasto-db/tree/develop) and on the GeoRoma OpenAM server.
+This repository contains the source code for the catasto API, which is written in Python using the FastAPI framework. The API is designed to generate cadastral documents, such as visure, and depends on the Catasto Postgres database available [here](https://github.com/catasto-open/catasto-db/tree/develop) and on an OpenAM server.
 
 ## Requirements
 - catasto-db
