@@ -1,7 +1,4 @@
-# https://github.com/tiangolo/uvicorn-gunicorn-fastapi-docker
-# adapted to poetry
-
-FROM tiangolo/uvicorn-gunicorn-fastapi:python3.8-slim
+FROM python:3.9
 
 # Install packages and dependencies
 RUN apt-get update \
@@ -18,9 +15,10 @@ RUN poetry config virtualenvs.create false
 
 # Copy using poetry.lock* in case it doesn't exist yet
 COPY ./pyproject.toml ./poetry.lock* /app/
+WORKDIR /app
 
 # install dependencies
-RUN poetry install --no-root --no-dev
+RUN poetry install --no-root --only main
 
 # copy project
 COPY ./ /app

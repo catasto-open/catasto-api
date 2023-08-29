@@ -76,24 +76,10 @@ The Swagger interface will be available at:
 
 `http://localhost:5000/siscat/api/v1/docs`
 
+## Docker image
 
-## Building and Pushing the Docker Image
+Docker image is built automatically via Github Actions.
 
-To build and push the Docker image, you can follow these steps:
-
-1. Build the Docker image using the following command:
-
-```bash
-docker build . -t <your-docker-username>/catasto-api --no-cache
-```
-
-2. Push the Docker image to Docker Hub using the following command:
-
-```bash
-docker push <your-docker-username>/catasto-api
-```
-
-Note that you need to replace `<your-docker-username>` with your Docker Hub username.
 
 ## Environment Variables
 
