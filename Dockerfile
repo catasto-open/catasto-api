@@ -23,5 +23,5 @@ RUN poetry install --no-root --only main
 # copy project
 COPY ./ /app
 
-# expose port
-EXPOSE 5000
+# run the server
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "5000"]
