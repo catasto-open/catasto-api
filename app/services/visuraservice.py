@@ -1,6 +1,8 @@
 from typing import List
 from app.services.main import AppService, AppQuery
 from app.models.visura import VisuraView
+from app.services.personafisicaservice import PersonaFisicaService
+from app.services.immobileservice import ImmobileService
 from app.schemas.visura import (
     TitolareItemResult, VisuraItem, DatiCatastaliFabbricatoItemResult, DatiCatastaliTerrenoItemResult, ErediItemResult, UtilitaItemResult
 )
@@ -11,6 +13,18 @@ class VisuraService(AppService):
 
     def get_visura_by_codiceimmobile(self, flagstorico: bool, comune: str, codiceimmobile: int, tipoimmobile: str) -> VisuraItem:
         return VisuraQuery(self.db).select_codiceimmobile(flagstorico, comune, codiceimmobile, tipoimmobile)
+
+    def get_visure_by_codicefiscale(self, comune: str, codicefiscale: str) -> VisuraItem:
+        persona_result = PersonaFisicaService.get_persona_by_codice_fiscale(self, comune, codicefiscale)
+        if persona_result and persona_result[0]:
+            cs = persona_result[0]['soggetto']
+            immobili_results = ImmobileService.get_immobili_by_codice_soggetto(self, False, comune, cs, '')
+            if immobili_results:
+                result = []
+                for immobile in immobili_results:
+                    result.append(VisuraQuery(self.db).select_codiceimmobile(False, comune, immobile['immobile'], ''))
+                return result
+        return None
 
 
 class VisuraQuery(AppQuery):

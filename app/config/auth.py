@@ -93,6 +93,53 @@ class CustomAuth(Auth):
                 raise HTTPException(status.HTTP_403_FORBIDDEN)
 
 
+    async def citizen_authorized(
+        self,
+        security_scopes: SecurityScopes,
+        authorization_credentials: Optional[HTTPAuthorizationCredentials] = Depends(
+            HTTPBearer()
+        ),
+    ) -> OpenAMIDToken:
+        """Validate and parse OIDC ID token against configuration.
+        Note this function caches the signatures and algorithms of the issuing
+        server for signature_cache_ttl seconds.
+        Args:
+            security_scopes (SecurityScopes): Security scopes
+            auth_header (str): Base64 encoded OIDC Token. This is invoked
+                behind the scenes by Depends.
+        Return:
+            OpenAMIDToken (self.idtoken_model): User information included
+                `tipo_utente`
+        raises:
+            HTTPException(status_code=401, detail=f"Unauthorized: {err}")
+            HTTPException(status_code=403, detail=f"Forbidden: {err}")
+            IDToken validation errors
+        """
+
+        id_token = self.required(
+            security_scopes,
+            authorization_credentials
+        )
+
+        if id_token is None:
+            raise HTTPException(status.HTTP_401_UNAUTHORIZED)
+        else:
+            userinfo = httpx.get(
+                self.openid_userinfo_url,
+                headers={
+                    "Authorization": f"{authorization_credentials.scheme} {authorization_credentials.credentials}"
+                }
+            )
+            user_type = userinfo.json().get('iv_tipoutente')
+            id_token = OpenAMIDToken(**id_token.dict())
+            id_token.tipo_utente = user_type
+            if id_token.tipo_utente == "cittadino":
+                return id_token
+            else:
+                logger.error("L'utente non ha un profilo CITTADINO");
+                raise HTTPException(status.HTTP_403_FORBIDDEN)
+
+
 auth = CustomAuth(
     openid_connect_url=f"{cfg.OPENAM_OIDC_BASE_URL}{cfg.OPENAM_OIDC_WELL_KNOWN_CONTEXT}",  # noqa
     openid_userinfo_url=cfg.OPENAM_OIDC_USERINFO_URL,

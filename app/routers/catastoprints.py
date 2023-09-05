@@ -18,22 +18,17 @@ from app.config.logging import create_logger
 logger = create_logger(name="app.config.client")
 
 router = APIRouter(
-    prefix="/catasto",
-    tags=["georoma"],
+    prefix="/catasto/stampa",
+    tags=["stampe"],
     responses={404: {"description": "Not found"}},
 )
-
-
-@router.get("/status/")
-async def healthcheck():
-    return {"status": "healthy"}
 
 @router.get("/auth/")
 async def protectedURL(user: OpenAMIDToken = Security(auth.authorized)):
     logger.debug(user.tipo_utente)
     return {"status": "Logged in"}
 
-@router.get("/stampa/visura", response_class=FileResponse)
+@router.get("/visura", response_class=FileResponse)
 async def visura(
     utente: OpenAMIDToken = Security(auth.authorized),
     comune: Optional[str] = Query(
@@ -85,7 +80,7 @@ async def visura(
                 status_code=404, 
                 detail="Nessun risultato trovato")
 
-@router.get("/stampa/ricerca/immobili", response_class=FileResponse)
+@router.get("/ricerca/immobili", response_class=FileResponse)
 async def immobili(
     utente: OpenAMIDToken = Security(auth.authorized),
     codicesoggetto: Optional[str] = Query(
@@ -209,7 +204,7 @@ async def immobili(
             detail="Nessun risultato trovato")
 
 
-@router.get("/stampa/ricerca/persone_fisiche", response_class=FileResponse)
+@router.get("/ricerca/persone_fisiche", response_class=FileResponse)
 async def persone_fisiche(
     utente: OpenAMIDToken = Security(auth.authorized),
     comune: Optional[str] = Query(
@@ -302,7 +297,7 @@ async def persone_fisiche(
             detail="Nessun risultato trovato")
 
 
-@router.get("/stampa/ricerca/persone_giuridiche", response_class=FileResponse)
+@router.get("/ricerca/persone_giuridiche", response_class=FileResponse)
 async def persone_giuridiche(
     utente: OpenAMIDToken = Security(auth.authorized),
     comune: Optional[str] = Query(
@@ -373,46 +368,3 @@ async def persone_giuridiche(
         raise HTTPException(
             status_code=404, 
             detail="Nessun risultato trovato")
-
-@router.get("/dati/visura", response_class=JSONResponse)
-async def visuraJSON(
-    utente: OpenAMIDToken = Security(auth.authorized),
-    comune: Optional[str] = Query(
-        "H501",
-        title="Comune",
-        description="Ricerca per codice immobile",
-        regex="^[a-zA-Z0-9_]*$",
-        max_length=4
-    ),
-    tipoimmobile: str = Query(
-        None,
-        title="Tipo Immobile",
-        description="Terreno (T) o Fabbricato (F)",
-        regex="^[a-zA-Z]*$",
-        max_length=1
-    ),
-    codiceimmobile: int = Query(
-        None,
-        title="Codice Immobile",
-        description="Ricerca per codice immobile"
-    ),
-    flagricercastorica: bool = Query(
-        False,
-        title="Flag ricerca storica",
-        description="Ricerca nei dati storici"
-    ),
-    db: get_db = Depends()):
-
-        if codiceimmobile:
-            result = VisuraService(db).get_visura_by_codiceimmobile(flagricercastorica, comune, codiceimmobile, tipoimmobile)
-        else:
-            raise HTTPException(
-                    status_code=422, 
-                    detail="Dati input non validi")
-
-        if result:
-            return result
-        else:
-            raise HTTPException(
-                status_code=404, 
-                detail="Nessun risultato trovato")

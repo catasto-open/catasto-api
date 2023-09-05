@@ -7,7 +7,7 @@ from starlette.middleware.cors import CORSMiddleware
 
 from app.config.config import configuration as cfg
 from app.config.logging import create_logger
-from app.routers import catastoprints
+from app.routers import catastoprints, catastodata
 from app.utils.app_exceptions import AppExceptionCase, app_exception_handler
 from app.utils.request_exceptions import (
     http_exception_handler,
@@ -43,6 +43,7 @@ def create_app() -> FastAPI:
     catastoapi = FastAPI(title="Catasto API")
 
     catastoapi.include_router(catastoprints.router)
+    catastoapi.include_router(catastodata.router)
     app.mount("/siscat/api/v1", catastoapi)
 
     app.logger = create_logger(name="app.main")
