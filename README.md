@@ -56,6 +56,8 @@ docker run -p 80:80 \
 -e DEV_SISCAT_DB_NAME=<db_name> \
 -e DEV_SISCAT_DB_USER=<db_user> \
 -e DEV_SISCAT_DB_PASSWORD=<db_password> \
+-e DEV_CUSTOM_SERVICES=True \
+-e DEV_CUSTOM_APIKEYS=["abc123","abc321"] \
 catasto-api
 ```
 
@@ -95,6 +97,8 @@ Docker image is built automatically via Github Actions.
 |DEV_SISCAT_DB_NAME	PostgreSQL    |database name                       |
 |DEV_SISCAT_DB_USER	PostgreSQL    |database user                       |
 |DEV_SISCAT_DB_PASSWORD           |PostgreSQL database password        |
+|DEV_CUSTOM_SERVICES              |Enables custom router               |
+|DEV_CUSTOM_APIKEYS               |APIKeys for custom services         |
 
 ## API Endpoints
 
