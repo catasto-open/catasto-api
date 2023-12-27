@@ -3,7 +3,7 @@ from datetime import date
 from app.services.main import AppService, AppQuery
 from app.models.immobile import ImmobileView
 from app.schemas.immobile import (
-    ImmobileItem
+    ImmobileItem, Titolarita, ImmobileFabbricatoDettagli, ImmobileTerrenoDettagli
 )
 
 
@@ -22,7 +22,7 @@ class ImmobileService(AppService):
         return ImmobileQuery(self.db).select_indirizzo(flagstorico, comune, toponimo, indirizzo, numerocivico, tipoimmobile)
 
     def get_immobili_comune_by_codiceimmobile(self, codiceimmobile: int, tipoimmobile: str) -> ImmobileItem:
-        return ImmobileQuery(self.db).select_codiceimmobile(False, 'H501', codiceimmobile, tipoimmobile)
+        return ImmobileQuery(self.db).select_immobili_comune_by_codiceimmobile(codiceimmobile, tipoimmobile)
 
 
 class ImmobileQuery(AppQuery):
@@ -71,3 +71,45 @@ class ImmobileQuery(AppQuery):
                 immobili_item.append(ImmobileItem(**item, by_alias=True).dict())
             return immobili_item
         return None
+
+    def select_immobili_comune_by_codiceimmobile(self, codiceimmobile: int, tipoimmobile: str) -> ImmobileItem:
+
+        quote_results= self.db.execute(
+            ImmobileView.select_titolaritacomune_bycodiceimmobile_tipoimmobile(codiceimmobile=codiceimmobile, tipoimmobile=tipoimmobile)
+        ).all()
+        quote_items = []
+        if quote_results:
+                for item in quote_results:
+                    quote_items.append(Titolarita(**item, by_alias=True).dict())
+        else:
+            return None;
+
+        immobili_item = []
+        if(tipoimmobile == 'F'):
+            immobili_results = self.db.execute(
+                ImmobileView.select_fabbricaticomune_bycodiceimmobile(codiceimmobile=codiceimmobile)
+            ).all()
+
+            if immobili_results:
+                for item in immobili_results:
+                    immobili_item.append(ImmobileFabbricatoDettagli(**item, by_alias=True).dict())
+            else:
+                return None
+
+        else:
+            immobili_results = self.db.execute(
+                ImmobileView.select_terrenicomune_bycodiceimmobile(codiceimmobile=codiceimmobile)
+            ).all()
+
+            if immobili_results:
+                for item in immobili_results:
+                    immobili_item.append(ImmobileTerrenoDettagli(**item, by_alias=True).dict())
+            else:
+                return None
+
+        for immobile_item in immobili_item:
+            for quote_item in quote_items:
+                if(quote_item['diritto'] != '' and quote_item['quota'] != ''):
+                    immobile_item['titolarita'].append(quote_item)
+
+        return immobili_item

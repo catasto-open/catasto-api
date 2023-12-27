@@ -345,3 +345,49 @@ class ImmobileView:
             IMMOBILE
         """
         return sql_view
+
+
+    def select_titolaritacomune_bycodiceimmobile_tipoimmobile(codiceimmobile: int, tipoimmobile: str) -> str:
+
+        sql_view = \
+        f"""
+        SELECT UN.DIRITTO, UN.QUOTA
+        FROM
+            CTCN.TITOLARITA_ROMA_CAPITALE UN
+        WHERE
+            UN.IMMOBILE = {codiceimmobile}
+            AND UN.TIPO_IMM = '{tipoimmobile}'
+        """
+        return sql_view
+
+    def select_fabbricaticomune_bycodiceimmobile(codiceimmobile: int) -> str:
+
+        sql_view = \
+        f"""
+        SELECT UN.*
+        FROM
+            CTCN.FABBRICATI_ROMA_CAPITALE UN
+        WHERE
+            UN.IMMOBILE = {codiceimmobile}
+        ORDER BY
+            UN.FOGLIO,
+            UN.PARTICELLA,
+            UN.SUBALTERNO
+        """
+        return sql_view
+
+    def select_terrenicomune_bycodiceimmobile(codiceimmobile: int) -> str:
+
+        sql_view = \
+        f"""
+        SELECT UN.*
+        FROM
+            CTCN.TERRENI_ROMA_CAPITALE UN
+        WHERE
+            UN.IMMOBILE = {codiceimmobile}
+        ORDER BY
+            UN.FOGLIO,
+            UN.PARTICELLA,
+            UN.SUBALTERNO
+        """
+        return sql_view
