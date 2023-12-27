@@ -44,6 +44,11 @@ def create_app() -> FastAPI:
 
     catastoapi.include_router(catastoprints.router)
     catastoapi.include_router(catastodata.router)
+    # This Router is reserved for custom views
+    if cfg.CUSTOM_CUSTOM_SERVICES:
+        from app.routers import vistecustom
+        catastoapi.include_router(vistecustom.router)
+
     app.mount("/siscat/api/v1", catastoapi)
 
     app.logger = create_logger(name="app.main")
