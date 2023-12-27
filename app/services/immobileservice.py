@@ -21,6 +21,9 @@ class ImmobileService(AppService):
     def get_immobili_by_indirizzo(self, flagstorico: bool, comune: str, toponimo: int, indirizzo: str, numerocivico: str, tipoimmobile: str) -> ImmobileItem:
         return ImmobileQuery(self.db).select_indirizzo(flagstorico, comune, toponimo, indirizzo, numerocivico, tipoimmobile)
 
+    def get_immobili_comune_by_codiceimmobile(self, codiceimmobile: int, tipoimmobile: str) -> ImmobileItem:
+        return ImmobileQuery(self.db).select_codiceimmobile(False, 'H501', codiceimmobile, tipoimmobile)
+
 
 class ImmobileQuery(AppQuery):
 
