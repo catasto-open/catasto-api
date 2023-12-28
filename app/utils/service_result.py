@@ -2,6 +2,7 @@ import inspect
 
 from app.config.logging import create_logger
 from app.utils.app_exceptions import AppExceptionCase
+from fastapi import HTTPException
 
 
 logger = create_logger("app.utils.service_result")
@@ -45,6 +46,8 @@ def handle_result(result: ServiceResult):
     if not result.success:
         with result as exception:
             logger.error(f"{exception} | caller={caller_info()}")
-            raise exception
+            raise HTTPException(
+                status_code=result.status_code, 
+                detail=result.exception_case)
     with result as result:
         return result

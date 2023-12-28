@@ -37,6 +37,25 @@ class AppException:
             status_code = 404
             context = "Persona Fisica not found"
             AppExceptionCase.__init__(self, status_code, context)
+    class ImmobileNotFound(AppExceptionCase):
+        def __init__(self, context: Dict[Any, Any]):
+            """
+            Immobile not found
+            """
+            status_code = 404
+            context = "Immobile"
+            error = "Not found"
+            AppExceptionCase.__init__(self, status_code, error, context)
+    class AuthAllowedFqdnError(AppExceptionCase):
+        def __init__(self, context: Dict[Any, Any]):
+            """
+            Authentication of allowed FQDN Error
+            """
+            status_code = 403
+            context = "Server"
+            error = "Server name not allowed"
+            AppExceptionCase.__init__(self, status_code, error, context)
+
 
 
 

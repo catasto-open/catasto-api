@@ -1,10 +1,10 @@
 import httpx
 from typing import Callable, Optional
 from fastapi_oidc import get_auth
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, HTTPException, Security, status
 from fastapi.security import (
     HTTPAuthorizationCredentials, HTTPBearer,
-    SecurityScopes
+    SecurityScopes, APIKeyHeader
 )
 from fastapi_third_party_auth import Auth, GrantType, IDToken
 
@@ -139,6 +139,15 @@ class CustomAuth(Auth):
                 logger.error("L'utente non ha un profilo CITTADINO");
                 raise HTTPException(status.HTTP_403_FORBIDDEN)
 
+api_key_header = APIKeyHeader(name="X-API-Key")
+
+def get_api_key(api_key_header: str = Security(api_key_header)) -> str:
+    if api_key_header in cfg.CUSTOM_APIKEYS:
+        return api_key_header
+    raise HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Invalid or missing API Key",
+    )
 
 auth = CustomAuth(
     openid_connect_url=f"{cfg.OPENAM_OIDC_BASE_URL}{cfg.OPENAM_OIDC_WELL_KNOWN_CONTEXT}",  # noqa
