@@ -56,7 +56,7 @@ docker run -p 80:80 \
 -e DEV_SISCAT_DB_NAME=<db_name> \
 -e DEV_SISCAT_DB_USER=<db_user> \
 -e DEV_SISCAT_DB_PASSWORD=<db_password> \
--e DEV_CUSTOM_SERVICES=True \
+-e DEV_CUSTOM_SERVICES=1 \
 -e DEV_CUSTOM_APIKEYS=["abc123","abc321"] \
 -e DEV_ALLOWED_FQDN=["localhost"] \
 catasto-api

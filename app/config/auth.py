@@ -142,7 +142,7 @@ class CustomAuth(Auth):
 api_key_header = APIKeyHeader(name="X-API-Key")
 
 def get_api_key(api_key_header: str = Security(api_key_header)) -> str:
-    if api_key_header in cfg.CUSTOM_APIKEYS:
+    if api_key_header in cfg.CUSTOM_APIKEYS.split(','):
         return api_key_header
     raise HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,

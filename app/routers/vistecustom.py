@@ -40,7 +40,7 @@ async def dati_immobile(
         logger.debug(f"API-KEY has been successfully evaluated")
         logger.debug(f"Server host: {request.base_url.netloc}")
         result = None
-        if request.base_url.netloc not in cfg.ALLOWED_FQDN:
+        if request.base_url.netloc not in cfg.ALLOWED_FQDN.split(','):
             result = ServiceResult(
                 AppException.AuthAllowedFqdnError(
                     {"fqdn": request.base_url.netloc}

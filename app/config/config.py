@@ -71,13 +71,13 @@ class DevConfig(GlobalConfig):
     SISCAT_DB_PASSWORD: Optional[str] = Field(
         None, env="DEV_SISCAT_DB_PASSWORD"
     )
-    CUSTOM_SERVICES: Optional[bool] = Field(
-        False, env="DEV_CUSTOM_SERVICES"
+    CUSTOM_SERVICES: Optional[int] = Field(
+        0, env="DEV_CUSTOM_SERVICES"
     )
-    CUSTOM_APIKEYS: Optional[list] = Field(
+    CUSTOM_APIKEYS: Optional[str] = Field(
         None, env="DEV_CUSTOM_APIKEYS"
     )
-    ALLOWED_FQDN: Optional[list] = Field(
+    ALLOWED_FQDN: Optional[str] = Field(
         None, env="DEV_ALLOWED_FQDN"
     )
 
@@ -130,13 +130,13 @@ class ProdConfig(GlobalConfig):
     SISCAT_DB_PASSWORD: Optional[str] = Field(
         None, env="PROD_SISCAT_DB_PASSWORD"
     )
-    CUSTOM_SERVICES: Optional[bool] = Field(
-        False, env="PROD_CUSTOM_SERVICES"
+    CUSTOM_SERVICES: Optional[int] = Field(
+        0, env="PROD_CUSTOM_SERVICES"
     )
-    CUSTOM_APIKEYS: Optional[list] = Field(
+    CUSTOM_APIKEYS: Optional[str] = Field(
         None, env="PROD_CUSTOM_APIKEYS"
     )
-    ALLOWED_FQDN: Optional[list] = Field(
+    ALLOWED_FQDN: Optional[str] = Field(
         None, env="PROD_ALLOWED_FQDN"
     )
 

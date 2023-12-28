@@ -45,7 +45,7 @@ def create_app() -> FastAPI:
     catastoapi.include_router(catastoprints.router)
     catastoapi.include_router(catastodata.router)
     # This Router is reserved for custom views
-    if cfg.CUSTOM_SERVICES:
+    if cfg.CUSTOM_SERVICES > 0:
         from app.routers import vistecustom
         catastoapi.include_router(vistecustom.router)
 
