@@ -39,6 +39,11 @@ class OpenAMIDToken(IDToken):
 # )
 
 class CustomAuth(Auth):
+    CAMPO_TIPO_UTENTE = 'iv_tipoutente'
+    CF_PERSONA_FISICA = 'sub'
+    CF_PERSONA_GIURIDICA = 'IV-PG-CODFIS'
+    PARTITA_IVA = 'IV-PG-PIVA'
+
     def __init__(self, openid_userinfo_url: str, **kwargs):
         self.openid_userinfo_url=openid_userinfo_url
         super().__init__(**kwargs)
@@ -80,7 +85,7 @@ class CustomAuth(Auth):
                     "Authorization": f"{authorization_credentials.scheme} {authorization_credentials.credentials}"
                 }
             )
-            user_type = userinfo.json().get('iv_tipoutente')
+            user_type = userinfo.json().get(self.CAMPO_TIPO_UTENTE)
             id_token = OpenAMIDToken(**id_token.dict())
             id_token.tipo_utente = user_type
             if cfg.SISCAT_WHITELIST_DIPENDENTE:
@@ -130,10 +135,20 @@ class CustomAuth(Auth):
                     "Authorization": f"{authorization_credentials.scheme} {authorization_credentials.credentials}"
                 }
             )
-            user_type = userinfo.json().get('iv_tipoutente')
+            user_type = userinfo.json().get(self.CAMPO_TIPO_UTENTE)
+            codice_fiscale =  userinfo.json().get(self.CF_PERSONA_FISICA)
+            partita_iva = userinfo.json().get(self.PARTITA_IVA)
+            cf_pgiuridica = userinfo.json().get(self.CF_PERSONA_GIURIDICA)
             id_token = OpenAMIDToken(**id_token.dict())
             id_token.tipo_utente = user_type
-            if id_token.tipo_utente == "cittadino":
+            if partita_iva and len(partita_iva.strip()) == 11:
+                id_token.partita_iva = partita_iva
+                return id_token
+            elif cf_pgiuridica and len(cf_pgiuridica.strip()) == 11:
+                id_token.partita_iva = cf_pgiuridica
+                return id_token
+            elif id_token.tipo_utente == "cittadino":
+                id_token.codice_fiscale = codice_fiscale
                 return id_token
             else:
                 logger.error("L'utente non ha un profilo CITTADINO");

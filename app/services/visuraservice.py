@@ -26,6 +26,18 @@ class VisuraService(AppService):
                 return result
         return None
 
+    def get_visure_by_partitaiva(self, comune: str, partitaiva: str) -> VisuraItem:
+        persona_result = PersonaFisicaService.get_persona_by_partitaiva(self, comune, partitaiva)
+        if persona_result and persona_result[0]:
+            cs = persona_result[0]['soggetto']
+            immobili_results = ImmobileService.get_immobili_by_codice_soggetto(self, False, comune, cs, '')
+            if immobili_results:
+                result = []
+                for immobile in immobili_results:
+                    result.append(VisuraQuery(self.db).select_codiceimmobile(False, comune, immobile['immobile'], ''))
+                return result
+        return None
+
 
 class VisuraQuery(AppQuery):
 

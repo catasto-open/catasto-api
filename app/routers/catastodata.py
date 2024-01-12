@@ -79,9 +79,12 @@ async def visuracittadino(
     ),
     db: get_db = Depends()):
 
-        codicefiscale = utente.sub
+        partita_iva = utente.partita_iva
+        codicefiscale = utente.codice_fiscale
 
-        if codicefiscale and len(codicefiscale.strip()) == 16:
+        if partita_iva and len(partita_iva.strip()) == 11:
+            result = VisuraService(db).get_visure_by_partitaiva(comune, partita_iva)
+        elif codicefiscale and len(codicefiscale.strip()) == 16:
             result = VisuraService(db).get_visure_by_codicefiscale(comune, codicefiscale)
         else:
             raise HTTPException(
