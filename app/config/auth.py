@@ -28,6 +28,8 @@ authenticate_user: Callable = get_auth(**OIDC_config)
 
 class OpenAMIDToken(IDToken):
     tipo_utente: Optional[str] = None
+    partita_iva: Optional[str] = None
+    codice_fiscale: Optional[str] = None
 
 
 # auth = Auth(
