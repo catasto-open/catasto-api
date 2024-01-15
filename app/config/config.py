@@ -80,6 +80,9 @@ class DevConfig(GlobalConfig):
     ALLOWED_FQDN: Optional[str] = Field(
         None, env="DEV_ALLOWED_FQDN"
     )
+    LIMIT_RESULT: Optional[int] = Field(
+        10, env="DEV_LIMIT_RESULT"
+    )
 
 
 class ProdConfig(GlobalConfig):
@@ -138,6 +141,9 @@ class ProdConfig(GlobalConfig):
     )
     ALLOWED_FQDN: Optional[str] = Field(
         None, env="PROD_ALLOWED_FQDN"
+    )
+    LIMIT_RESULT: Optional[int] = Field(
+        10, env="DEV_LIMIT_RESULT"
     )
 
 

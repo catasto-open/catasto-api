@@ -18,7 +18,7 @@ class ImmobileView:
 
         sql_view = \
         f"""
-        SELECT
+        SELECT DISTINCT
             UN.TIPO_IMMOBILE AS TIPOIMMOBILE,
             UN.FOGLIO,
             UN.PARTICELLA,

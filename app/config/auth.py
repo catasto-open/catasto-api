@@ -30,6 +30,8 @@ class OpenAMIDToken(IDToken):
     tipo_utente: Optional[str] = None
     partita_iva: Optional[str] = None
     codice_fiscale: Optional[str] = None
+    iv_pg_codfis: Optional[str] = None
+    iv_pg_piva: Optional[str] = None
 
 
 # auth = Auth(
@@ -43,8 +45,8 @@ class OpenAMIDToken(IDToken):
 class CustomAuth(Auth):
     CAMPO_TIPO_UTENTE = 'iv_tipoutente'
     CF_PERSONA_FISICA = 'sub'
-    CF_PERSONA_GIURIDICA = 'IV-PG-CODFIS'
-    PARTITA_IVA = 'IV-PG-PIVA'
+    CF_PERSONA_GIURIDICA = 'iv_pg_codfis'
+    PARTITA_IVA = 'iv_pg_piva'
 
     def __init__(self, openid_userinfo_url: str, **kwargs):
         self.openid_userinfo_url=openid_userinfo_url
@@ -131,16 +133,20 @@ class CustomAuth(Auth):
         if id_token is None:
             raise HTTPException(status.HTTP_401_UNAUTHORIZED)
         else:
-            userinfo = httpx.get(
-                self.openid_userinfo_url,
-                headers={
-                    "Authorization": f"{authorization_credentials.scheme} {authorization_credentials.credentials}"
-                }
-            )
-            user_type = userinfo.json().get(self.CAMPO_TIPO_UTENTE)
-            codice_fiscale =  userinfo.json().get(self.CF_PERSONA_FISICA)
-            partita_iva = userinfo.json().get(self.PARTITA_IVA)
-            cf_pgiuridica = userinfo.json().get(self.CF_PERSONA_GIURIDICA)
+
+            partita_iva = id_token.iv_pg_codfis
+            cf_pgiuridica = id_token.iv_pg_piva
+            user_type = None
+            codice_fiscale = None
+            if(not(partita_iva and cf_pgiuridica)):
+                userinfo = httpx.get(
+                    self.openid_userinfo_url,
+                    headers={
+                        "Authorization": f"{authorization_credentials.scheme} {authorization_credentials.credentials}"
+                    }
+                )
+                user_type = userinfo.json().get(self.CAMPO_TIPO_UTENTE)
+                codice_fiscale =  userinfo.json().get(self.CF_PERSONA_FISICA)
             id_token = OpenAMIDToken(**id_token.dict())
             id_token.tipo_utente = user_type
             if partita_iva and len(partita_iva.strip()) == 11:
@@ -171,7 +177,7 @@ auth = CustomAuth(
     openid_userinfo_url=cfg.OPENAM_OIDC_USERINFO_URL,
     # issuer=f"{cfg.OPENAM_OIDC_BASE_URL}",
     client_id=cfg.OPENAM_CLIENT_ID,  # optional, verification only
-    scopes=["openid", "tipo_utente"],  # optional, verification only
+    scopes=["openid", "tipo_utente"],#["profile", "openid", "persona_giuridica"], #scopes=["openid", "tipo_utente"],  # optional, verification only
     grant_types=[GrantType.AUTHORIZATION_CODE],  # optional, docs only
     idtoken_model=OpenAMIDToken,  # optional, verification only
 )

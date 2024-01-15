@@ -13,6 +13,7 @@ from datetime import date
 from enum import Enum
 import re
 from app.config.logging import create_logger
+from app.config.config import configuration as cfg
 
 
 logger = create_logger(name="app.config.client")
@@ -77,15 +78,27 @@ async def visuracittadino(
         regex="^[a-zA-Z0-9_]*$",
         max_length=4
     ),
+    offset: Optional[int] = Query(
+        1,
+        title="Offset",
+        gt=0,
+        description="Primo valore da restituire"
+    ),
+    limit: Optional[int] = Query(
+        cfg.LIMIT_RESULT,
+        gt=0,
+        title="Limite",
+        description="Numero massimo valori da restituire (raccomandato 10)"
+    ),
     db: get_db = Depends()):
 
         partita_iva = utente.partita_iva
         codicefiscale = utente.codice_fiscale
 
         if partita_iva and len(partita_iva.strip()) == 11:
-            result = VisuraService(db).get_visure_by_partitaiva(comune, partita_iva)
+            result = VisuraService(db).get_visure_by_partitaiva(comune, partita_iva, offset-1, limit)
         elif codicefiscale and len(codicefiscale.strip()) == 16:
-            result = VisuraService(db).get_visure_by_codicefiscale(comune, codicefiscale)
+            result = VisuraService(db).get_visure_by_codicefiscale(comune, codicefiscale, offset-1, limit)
         else:
             raise HTTPException(
                     status_code=422, 
