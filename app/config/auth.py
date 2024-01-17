@@ -172,12 +172,16 @@ def get_api_key(api_key_header: str = Security(api_key_header)) -> str:
         detail="Invalid or missing API Key",
     )
 
+oaut_scope = None
+if(cfg.OPENAM_SCOPES):
+    oaut_scope = cfg.OPENAM_SCOPES.split(',')
+
 auth = CustomAuth(
     openid_connect_url=f"{cfg.OPENAM_OIDC_BASE_URL}{cfg.OPENAM_OIDC_WELL_KNOWN_CONTEXT}",  # noqa
     openid_userinfo_url=cfg.OPENAM_OIDC_USERINFO_URL,
     # issuer=f"{cfg.OPENAM_OIDC_BASE_URL}",
     client_id=cfg.OPENAM_CLIENT_ID,  # optional, verification only
-    scopes=cfg.OPENAM_SCOPES.split(','),#["profile", "openid", "persona_giuridica"], #scopes=["openid", "tipo_utente"],  # optional, verification only
+    scopes=oaut_scope,#["profile", "openid", "persona_giuridica"], #scopes=["openid", "tipo_utente"],  # optional, verification only
     grant_types=[GrantType.AUTHORIZATION_CODE],  # optional, docs only
     idtoken_model=OpenAMIDToken,  # optional, verification only
 )
