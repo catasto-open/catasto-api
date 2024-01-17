@@ -177,7 +177,7 @@ auth = CustomAuth(
     openid_userinfo_url=cfg.OPENAM_OIDC_USERINFO_URL,
     # issuer=f"{cfg.OPENAM_OIDC_BASE_URL}",
     client_id=cfg.OPENAM_CLIENT_ID,  # optional, verification only
-    scopes=["openid", "tipo_utente"],#["profile", "openid", "persona_giuridica"], #scopes=["openid", "tipo_utente"],  # optional, verification only
+    scopes=cfg.OPENAM_SCOPES.split(','),#["profile", "openid", "persona_giuridica"], #scopes=["openid", "tipo_utente"],  # optional, verification only
     grant_types=[GrantType.AUTHORIZATION_CODE],  # optional, docs only
     idtoken_model=OpenAMIDToken,  # optional, verification only
 )

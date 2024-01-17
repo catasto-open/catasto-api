@@ -52,6 +52,10 @@ class DevConfig(GlobalConfig):
         None,
         env="DEV_OPENAM_OIDC_WELL_KNOWN_CONTEXT",
     )
+    OPENAM_SCOPES: Optional[str] = Field(
+        None,
+        env="DEV_OPENAM_SCOPES"
+    )
     SISCAT_WHITELIST_DIPENDENTE: Optional[str] = Field(
         None,
         env="DEV_SISCAT_WHITELIST_DIPENDENTE",
@@ -114,6 +118,10 @@ class ProdConfig(GlobalConfig):
         None,
         env="PROD_OPENAM_OIDC_WELL_KNOWN_CONTEXT",
     )
+    OPENAM_SCOPES: Optional[str] = Field(
+        None,
+        env="PROD_OPENAM_SCOPES"
+    )
     SISCAT_WHITELIST_DIPENDENTE: Optional[str] = Field(
         None,
         env="PROD_SISCAT_WHITELIST_DIPENDENTE",
@@ -143,7 +151,7 @@ class ProdConfig(GlobalConfig):
         None, env="PROD_ALLOWED_FQDN"
     )
     LIMIT_RESULT: Optional[int] = Field(
-        10, env="DEV_LIMIT_RESULT"
+        10, env="PROD_LIMIT_RESULT"
     )
 
 
