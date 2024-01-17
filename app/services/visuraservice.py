@@ -93,7 +93,7 @@ class VisuraQuery(AppQuery):
                 item_dict = DatiCatastaliFabbricatoItemResult(**item, by_alias=True).dict()
                 item_dict['derivanti_da'] = self.compile_dati_derivanti_da(item_dict['gen_tipo_nota'], item_dict['gen_descr'], item_dict['gen_causa'], item_dict['gen_data_reg'], item_dict['gen_progressivo'], item_dict['gen_data_eff'])
                 item_dict['progressivo'] = progressivo
-                if item_dict['partita'] == 'SOPPRESSA':
+                if item_dict['partita'] == 'SOPPRESSA' and (not item_dict['gen_tipo_nota'] or item_dict['gen_tipo_nota'].upper() != 'IMPIANTO') :
                     item_dict['eredi'] = self.select_eredi_fabbricati(codiceimmobile, item_dict['mutazioneiniziale'])
                 else:
                     item_dict['eredi'] = None
@@ -114,7 +114,8 @@ class VisuraQuery(AppQuery):
                 item_dict = DatiCatastaliTerrenoItemResult(**item, by_alias=True).dict()
                 item_dict['derivanti_da'] = self.compile_dati_derivanti_da(item_dict['gen_tipo_nota'], item_dict['gen_descr'], item_dict['gen_causa'], item_dict['gen_data_reg'], item_dict['gen_progressivo'], item_dict['gen_data_eff'])
                 item_dict['progressivo'] = progressivo
-                item_dict['eredi'] = self.select_eredi_terreni(codiceimmobile, item_dict['mutazioneiniziale'])
+                if(not item_dict['gen_tipo_nota'] or item_dict['gen_tipo_nota'].upper() != 'IMPIANTO'):
+                    item_dict['eredi'] = self.select_eredi_terreni(codiceimmobile, item_dict['mutazioneiniziale'])
                 immobili_item.append(item_dict)
             return immobili_item
         return None
