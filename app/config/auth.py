@@ -176,6 +176,9 @@ oaut_scope = []
 if(cfg.OPENAM_SCOPES):
     oaut_scope = cfg.OPENAM_SCOPES.split(',')
 
+    if not oaut_scope:
+        oaut_scope = []
+
 auth = CustomAuth(
     openid_connect_url=f"{cfg.OPENAM_OIDC_BASE_URL}{cfg.OPENAM_OIDC_WELL_KNOWN_CONTEXT}",  # noqa
     openid_userinfo_url=cfg.OPENAM_OIDC_USERINFO_URL,
