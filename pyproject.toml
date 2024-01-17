@@ -10,7 +10,6 @@ aiofiles = "^22.1.0"
 python-multipart = "^0.0.5"
 httpx-oauth = "^0.10.1"
 fastapi-oidc = "^0.0.9"
-loguru = "^0.7.0"
 uvicorn = "^0.18.3"
 pydantic = {extras = ["dotenv"], version = "^1.10.12"}
 pdfkit = "^1.0.0"
@@ -21,6 +20,7 @@ Jinja2 = "^3.1.2"
 fastapi-third-party-auth = "^0.1.2"
 pandas = "^1.5.1"
 fastapi = "^0.103.0"
+loguru = "^0.7.2"
 
 [tool.poetry.dev-dependencies]
 ipython = "^8.4.0"
