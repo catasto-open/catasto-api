@@ -40,7 +40,6 @@ class ImmobileQuery(AppQuery):
 
 
     def select_codicesoggetto(self, flagstorico: bool, comune: str, cs: int, tipoimmobile: str) -> ImmobileItem:
-        breakpoint()
         immobili_results = self.db.execute(
             ImmobileView.select_codicesoggetto(flagstorico=flagstorico, comune=comune, cs=cs, tipoimmobile=tipoimmobile)
         ).all()
