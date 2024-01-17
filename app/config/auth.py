@@ -172,7 +172,7 @@ def get_api_key(api_key_header: str = Security(api_key_header)) -> str:
         detail="Invalid or missing API Key",
     )
 
-oaut_scope = None
+oaut_scope = []
 if(cfg.OPENAM_SCOPES):
     oaut_scope = cfg.OPENAM_SCOPES.split(',')
 
