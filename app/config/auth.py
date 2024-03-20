@@ -1,4 +1,5 @@
 import httpx
+import jwt
 from typing import Callable, Optional
 from fastapi_oidc import get_auth
 from fastapi import Depends, HTTPException, Security, status
@@ -14,33 +15,12 @@ from app.config.logging import create_logger
 
 logger = create_logger(name="app.config.client")
 
-
-OIDC_config = {
-    "client_id": cfg.OPENAM_CLIENT_ID,
-    # Audience can be omitted in which case the aud value defaults to client_id
-    # "audience": "http://localhost:5000/api/v1",
-    "base_authorization_server_uri": cfg.OPENAM_OIDC_BASE_URL,
-    "issuer": cfg.OPENAM_OIDC_BASE_URL,
-    "signature_cache_ttl": 3600,
-}
-
-authenticate_user: Callable = get_auth(**OIDC_config)
-
 class OpenAMIDToken(IDToken):
     tipo_utente: Optional[str] = None
     partita_iva: Optional[str] = None
     codice_fiscale: Optional[str] = None
     iv_pg_codfis: Optional[str] = None
     iv_pg_piva: Optional[str] = None
-
-
-# auth = Auth(
-#     openid_connect_url=f"{cfg.OPENAM_OIDC_BASE_URL}{cfg.OPENAM_OIDC_WELL_KNOWN_CONTEXT}",  # noqa
-#     client_id=cfg.OPENAM_CLIENT_ID,  # optional, verification only
-#     scopes=["openid", "tipo_utente"],  # optional, verification only
-#     grant_types=[GrantType.AUTHORIZATION_CODE],  # optional, docs only
-#     idtoken_model=OpenAMIDToken,  # optional, verification only
-# )
 
 class CustomAuth(Auth):
     CAMPO_TIPO_UTENTE = 'iv_tipoutente'
@@ -104,7 +84,6 @@ class CustomAuth(Auth):
 
     async def citizen_authorized(
         self,
-        security_scopes: SecurityScopes,
         authorization_credentials: Optional[HTTPAuthorizationCredentials] = Depends(
             HTTPBearer()
         ),
@@ -125,29 +104,28 @@ class CustomAuth(Auth):
             IDToken validation errors
         """
 
-        id_token = self.required(
-            security_scopes,
-            authorization_credentials
-        )
+        token = authorization_credentials.credentials
+        id_token = jwt.decode(token, options={"verify_signature": False})
 
         if id_token is None:
             raise HTTPException(status.HTTP_401_UNAUTHORIZED)
         else:
+            id_token =  OpenAMIDToken(**id_token)
 
+            userinfo = httpx.get(
+                self.openid_userinfo_url,
+                headers={
+                    "Authorization": f"{authorization_credentials.scheme} {authorization_credentials.credentials}"
+                }
+            )
+
+            codice_fiscale =  userinfo.json().get(self.CF_PERSONA_FISICA)
             partita_iva = id_token.iv_pg_codfis
             cf_pgiuridica = id_token.iv_pg_piva
             user_type = None
-            codice_fiscale = None
+
             if(not(partita_iva and cf_pgiuridica)):
-                userinfo = httpx.get(
-                    self.openid_userinfo_url,
-                    headers={
-                        "Authorization": f"{authorization_credentials.scheme} {authorization_credentials.credentials}"
-                    }
-                )
                 user_type = userinfo.json().get(self.CAMPO_TIPO_UTENTE)
-                codice_fiscale =  userinfo.json().get(self.CF_PERSONA_FISICA)
-            id_token = OpenAMIDToken(**id_token.dict())
             id_token.tipo_utente = user_type
             if partita_iva and len(partita_iva.strip()) == 11:
                 id_token.partita_iva = partita_iva

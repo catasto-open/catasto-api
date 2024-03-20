@@ -21,6 +21,7 @@ fastapi-third-party-auth = "^0.1.2"
 pandas = "^1.5.1"
 fastapi = "^0.103.0"
 loguru = "^0.7.2"
+pyjwt = "^2.8.0"
 
 [tool.poetry.dev-dependencies]
 ipython = "^8.4.0"
