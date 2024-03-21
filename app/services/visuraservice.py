@@ -142,7 +142,7 @@ class VisuraQuery(AppQuery):
         eredi_results = self.db.execute(
             VisuraView.select_eredi_fabbricati(codiceimmobile=codiceimmobile, mutazioneiniziale=mutazioneiniziale)
         ).all()
-        if eredi_results:
+        if eredi_results and len(eredi_results) != 0:
             return eredi_results
         return None
 
@@ -150,7 +150,7 @@ class VisuraQuery(AppQuery):
         eredi_results = self.db.execute(
             VisuraView.select_eredi_terreni(codiceimmobile=codiceimmobile, mutazioneiniziale=mutazioneiniziale)
         ).all()
-        if eredi_results:
+        if eredi_results and len(eredi_results) != 0:
             return eredi_results
         return None
 
