@@ -10,7 +10,7 @@ aiofiles = "^22.1.0"
 python-multipart = "^0.0.5"
 httpx-oauth = "^0.10.1"
 fastapi-oidc = "^0.0.9"
-uvicorn = "^0.18.3"
+uvicorn = { extras = ["standard"], version = "^0.29.0" }
 pydantic = {extras = ["dotenv"], version = "^1.10.12"}
 pdfkit = "^1.0.0"
 databases = {extras = ["asyncpg"], version = "^0.6.1"}

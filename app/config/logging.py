@@ -10,11 +10,7 @@ from app.schemas.config import LoggerModel, LoggingBase
 
 
 class InterceptHandler(logging.Handler):
-    """[summary]
-
-    Args:
-        logging ([type]): [description]
-    """
+    """Custom logging interceptor."""
 
     loglevel_mapping = {
         50: "CRITICAL",
@@ -46,12 +42,12 @@ class InterceptHandler(logging.Handler):
 class CustomizeLogger:
     @classmethod
     def make_logger(cls, config: LoggerModel):
-
         logging_config = config.logger
 
         logger = cls.customize_logging(
             filepath=logging_config.path,
             level=logging_config.level,
+            enqueue=logging_config.enqueue,
             retention=logging_config.retention,
             rotation=logging_config.rotation,
             format=logging_config.format_,
@@ -63,15 +59,15 @@ class CustomizeLogger:
         cls,
         filepath: Path,
         level: str,
+        enqueue: bool,
         rotation: str,
         retention: str,
         format: str,
     ):
-
         logger.remove()
         logger.add(
             sys.stdout,
-            enqueue=True,
+            enqueue=enqueue,
             backtrace=True,
             level=level.upper(),
             format=format,
@@ -80,7 +76,7 @@ class CustomizeLogger:
             str(filepath),
             rotation=rotation,
             retention=retention,
-            enqueue=True,
+            enqueue=enqueue,
             backtrace=True,
             level=level.upper(),
             format=format,
@@ -100,6 +96,7 @@ def create_logger(name: str):
         logger=LoggingBase(
             path=Path(cfg.LOG_PATH) / cfg.LOG_FILENAME,
             level=cfg.LOG_LEVEL,
+            enqueue=cfg.LOG_ENQUEUE,
             retention=cfg.LOG_RETENTION,
             rotation=cfg.LOG_ROTATION,
             format_=cfg.LOG_FORMAT,

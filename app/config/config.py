@@ -32,6 +32,7 @@ class DevConfig(GlobalConfig):
 
     ROOT_PATH: Optional[str] = Field(None, env="DEV_ROOT_PATH")
     LOG_LEVEL: Optional[str] = Field(None, env="DEV_LOG_LEVEL")
+    LOG_ENQUEUE: Optional[str] = Field(None, env="DEV_LOG_ENQUEUE")
     OPENAM_CLIENT_ID: Optional[str] = Field(
         None,
         env="DEV_OPENAM_CLIENT_ID",
@@ -84,6 +85,9 @@ class DevConfig(GlobalConfig):
     ALLOWED_FQDN: Optional[str] = Field(
         None, env="DEV_ALLOWED_FQDN"
     )
+    ALLOWED_AUDIENCES: Optional[str] = Field(
+        None, env="DEV_ALLOWED_AUDIENCES"
+    )
     LIMIT_RESULT: Optional[int] = Field(
         10, env="DEV_LIMIT_RESULT"
     )
@@ -94,6 +98,7 @@ class ProdConfig(GlobalConfig):
 
     ROOT_PATH: Optional[str] = Field(None, env="PROD_ROOT_PATH")
     LOG_LEVEL: Optional[str] = Field(None, env="PROD_LOG_LEVEL")
+    LOG_ENQUEUE: Optional[str] = Field(None, env="PROD_LOG_ENQUEUE")
     LOCAL_STORAGE_BASEPATH: Optional[str] = Field(
         None,
         env="PROD_LOCAL_STORAGE_BASEPATH"
@@ -149,6 +154,9 @@ class ProdConfig(GlobalConfig):
     )
     ALLOWED_FQDN: Optional[str] = Field(
         None, env="PROD_ALLOWED_FQDN"
+    )
+    ALLOWED_AUDIENCES: Optional[str] = Field(
+        None, env="PROD_ALLOWED_AUDIENCES"
     )
     LIMIT_RESULT: Optional[int] = Field(
         10, env="PROD_LIMIT_RESULT"
