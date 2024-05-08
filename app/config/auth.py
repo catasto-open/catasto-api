@@ -22,6 +22,8 @@ class OpenAMIDToken(IDToken):
     codice_fiscale: Optional[str] = None
     iv_pg_codfis: Optional[str] = None
     iv_pg_piva: Optional[str] = None
+    iv_codfis: Optional[str] = None
+    iv_tipoutente: Optional[str] = None
 
 class CustomAuth(Auth):
     CAMPO_TIPO_UTENTE = "iv_tipoutente"
@@ -106,7 +108,11 @@ class CustomAuth(Auth):
         """
 
         token = authorization_credentials.credentials
-        id_token = jwt.decode(token, options={"verify_signature": False})
+        try:
+            id_token = jwt.decode(token, options={"verify_signature": False})
+        except jwt.exceptions.DecodeError as err:
+            logger.error(f"Token decode error: {err}")
+            raise HTTPException(status.HTTP_401_UNAUTHORIZED)
 
         if id_token is None:
             raise HTTPException(status.HTTP_401_UNAUTHORIZED)
@@ -115,6 +121,7 @@ class CustomAuth(Auth):
                 id_token =  OpenAMIDToken(**id_token)
                 partita_iva = id_token.iv_pg_codfis
                 cf_pgiuridica = id_token.iv_pg_piva
+                cf_pfisica = id_token.iv_codfis
                 audience = id_token.aud
                 if audience not in cfg.ALLOWED_AUDIENCES.split(','):
                     logger.error(
@@ -122,21 +129,24 @@ class CustomAuth(Auth):
                     )
                     raise HTTPException(status.HTTP_401_UNAUTHORIZED)
 
-                userinfo = httpx.get(
-                    self.openid_userinfo_url,
-                    headers={
-                        "Authorization": f"{authorization_credentials.scheme} {authorization_credentials.credentials}"  # noqa
-                    }
-                )
-                logger.debug(f"Userinfo response code is {userinfo.status_code}")
-                userinfo.raise_for_status()
-
-                codice_fiscale =  userinfo.json().get(self.CF_PERSONA_FISICA)
-                logger.info(f"Fiscal code for user {id_token.sub} is {codice_fiscale}")
-
                 user_type = None
-                if(not(partita_iva and cf_pgiuridica)):
-                    user_type = userinfo.json().get(self.CAMPO_TIPO_UTENTE)
+                if id_token.iv_tipoutente:
+                    user_type = id_token.iv_tipoutente
+                if not cf_pfisica:
+                    userinfo = httpx.get(
+                        self.openid_userinfo_url,
+                        headers={
+                            "Authorization": f"{authorization_credentials.scheme} {authorization_credentials.credentials}"  # noqa
+                        }
+                    )
+                    logger.debug(f"Userinfo response code is {userinfo.status_code}")
+                    userinfo.raise_for_status()
+                    codice_fiscale =  userinfo.json().get(self.CF_PERSONA_FISICA)
+                    if(not(partita_iva and cf_pgiuridica)):
+                        user_type = userinfo.json().get(self.CAMPO_TIPO_UTENTE)
+                else:
+                    codice_fiscale = cf_pfisica
+                logger.info(f"Fiscal code for user {id_token.sub} is {codice_fiscale}")
                 logger.info(f"User type for user {id_token.sub} is {user_type}")
                 id_token.tipo_utente = user_type
 
