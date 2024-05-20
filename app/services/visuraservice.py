@@ -168,6 +168,8 @@ class VisuraQuery(AppQuery):
         ).first()
         if visura_result:
             visura_item = VisuraItem(**visura_result, by_alias=True).dict()
+            visura_item['codice_immobile'] = codiceimmobile
+            visura_item['tipoimmobile'] = tipoimmobile
             visura_item['dati_catastali_fabbricato_attuali'] = self.select_dettagli_fabbricato(False, visura_item['comune'], visura_item['foglio'], visura_item['particella'], codiceimmobile)
             visura_item['dati_catastali_terreno_attuali'] = self.select_dettagli_terreno(False, visura_item['comune'], visura_item['foglio'], visura_item['particella'], codiceimmobile)
             visura_item['titolari_attuali'] = self.select_titolari(False, visura_item['comune'], codiceimmobile, tipoimmobile)
