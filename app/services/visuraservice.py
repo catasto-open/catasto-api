@@ -173,6 +173,10 @@ class VisuraQuery(AppQuery):
             visura_item['dati_catastali_fabbricato_attuali'] = self.select_dettagli_fabbricato(False, visura_item['comune'], visura_item['foglio'], visura_item['particella'], codiceimmobile)
             visura_item['dati_catastali_terreno_attuali'] = self.select_dettagli_terreno(False, visura_item['comune'], visura_item['foglio'], visura_item['particella'], codiceimmobile)
             visura_item['titolari_attuali'] = self.select_titolari(False, visura_item['comune'], codiceimmobile, tipoimmobile)
+            if visura_item['dati_catastali_fabbricato_attuali']:
+                visura_item['tipoimmobile'] = 'F'
+            if visura_item['dati_catastali_terreno_attuali']:
+                visura_item['tipoimmobile'] = 'T'
             if(flagstorico):
                 visura_item['dati_catastali_fabbricato_storico'] = self.select_dettagli_fabbricato(True, visura_item['comune'], visura_item['foglio'], visura_item['particella'], codiceimmobile)
                 visura_item['dati_catastali_terreno_storico'] = self.select_dettagli_terreno(True, visura_item['comune'], visura_item['foglio'], visura_item['particella'], codiceimmobile)
