@@ -24,12 +24,16 @@ class OpenAMIDToken(IDToken):
     iv_pg_piva: Optional[str] = None
     iv_codfis: Optional[str] = None
     iv_tipoutente: Optional[str] = None
+    token_type: Optional[str] = None
+    tokenType: Optional[str] = None
 
 class CustomAuth(Auth):
     CAMPO_TIPO_UTENTE = "iv_tipoutente"
     CF_PERSONA_FISICA = "sub"
     CF_PERSONA_GIURIDICA = "iv_pg_codfis"
     PARTITA_IVA = "iv_pg_piva"
+    ID_TOKEN_TYPE = "JWTToken"
+    ACCESS_TOKEN_TYPE = "Bearer"
 
     def __init__(self, openid_userinfo_url: str, **kwargs):
         self.openid_userinfo_url=openid_userinfo_url
@@ -119,20 +123,39 @@ class CustomAuth(Auth):
         else:
             try:
                 id_token =  OpenAMIDToken(**id_token)
-                partita_iva = id_token.iv_pg_codfis
-                cf_pgiuridica = id_token.iv_pg_piva
-                cf_pfisica = id_token.iv_codfis
+                token_type = id_token.tokenType or id_token.token_type
+
+                if token_type == self.ACCESS_TOKEN_TYPE:
+                    logger.info(f"Using an Access Token")
+                elif token_type == self.ID_TOKEN_TYPE:
+                    logger.info(f"Using an ID Token")
+                else:
+                    logger.info(f"Unknown token type: {token_type}")
+
+                partita_iva = None
+                cf_pgiuridica = None
+                if(id_token.iv_pg_codfis and id_token.iv_pg_codfis != "NOT_FOUND"):
+                    partita_iva = id_token.iv_pg_codfis
+                if(id_token.iv_pg_piva and id_token.iv_pg_piva != "NOT_FOUND"):
+                    cf_pgiuridica = id_token.iv_pg_piva
+
                 audience = id_token.aud
                 if audience not in cfg.ALLOWED_AUDIENCES.split(','):
                     logger.error(
-                        f"L'utente appartiene ad una applicazione {audience} non autorizzata"
+                        f"The audience {audience} is not authorized"
                     )
+                    raise HTTPException(status.HTTP_401_UNAUTHORIZED)
+
+                if not(partita_iva and cf_pgiuridica) \
+                    and token_type != self.ACCESS_TOKEN_TYPE:
+                    logger.error("Please use an AccessToken")
                     raise HTTPException(status.HTTP_401_UNAUTHORIZED)
 
                 user_type = None
                 if id_token.iv_tipoutente:
                     user_type = id_token.iv_tipoutente
-                if not cf_pfisica:
+
+                if token_type == self.ACCESS_TOKEN_TYPE:
                     userinfo = httpx.get(
                         self.openid_userinfo_url,
                         headers={
@@ -141,12 +164,13 @@ class CustomAuth(Auth):
                     )
                     logger.debug(f"Userinfo response code is {userinfo.status_code}")
                     userinfo.raise_for_status()
-                    codice_fiscale =  userinfo.json().get(self.CF_PERSONA_FISICA)
+                    codice_fiscale = userinfo.json().get(self.CF_PERSONA_FISICA)
+                    id_token.codice_fiscale = codice_fiscale
+                    logger.info(f"Fiscal code for user {id_token.sub} is {codice_fiscale}")
+                    print(userinfo.json())
                     if(not(partita_iva and cf_pgiuridica)):
                         user_type = userinfo.json().get(self.CAMPO_TIPO_UTENTE)
-                else:
-                    codice_fiscale = cf_pfisica
-                logger.info(f"Fiscal code for user {id_token.sub} is {codice_fiscale}")
+
                 logger.info(f"User type for user {id_token.sub} is {user_type}")
                 id_token.tipo_utente = user_type
 
@@ -157,10 +181,9 @@ class CustomAuth(Auth):
                     id_token.partita_iva = cf_pgiuridica
                     return id_token
                 elif id_token.tipo_utente == "cittadino":
-                    id_token.codice_fiscale = codice_fiscale
                     return id_token
                 else:
-                    logger.error("L'utente non ha un profilo CITTADINO");
+                    logger.error("The user must have CITTADINO profile");
                     raise HTTPException(status.HTTP_403_FORBIDDEN)
             except ValidationError:
                 logger.error(
