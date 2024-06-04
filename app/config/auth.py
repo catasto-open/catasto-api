@@ -91,6 +91,7 @@ class CustomAuth(Auth):
 
     async def citizen_authorized(
         self,
+        security_scopes: SecurityScopes,
         authorization_credentials: Optional[HTTPAuthorizationCredentials] = Depends(
             HTTPBearer()
         ),
@@ -111,87 +112,33 @@ class CustomAuth(Auth):
             IDToken validation errors
         """
 
-        token = authorization_credentials.credentials
-        try:
-            id_token = jwt.decode(token, options={"verify_signature": False})
-        except jwt.exceptions.DecodeError as err:
-            logger.error(f"Token decode error: {err}")
-            raise HTTPException(status.HTTP_401_UNAUTHORIZED)
+        id_token = self.required(
+            security_scopes,
+            authorization_credentials
+        )
 
         if id_token is None:
             raise HTTPException(status.HTTP_401_UNAUTHORIZED)
         else:
-            try:
-                id_token =  OpenAMIDToken(**id_token)
-                token_type = id_token.tokenType or id_token.token_type
-
-                if token_type == self.ACCESS_TOKEN_TYPE:
-                    logger.info(f"Using an Access Token")
-                elif token_type == self.ID_TOKEN_TYPE:
-                    logger.info(f"Using an ID Token")
-                else:
-                    logger.info(f"Unknown token type: {token_type}")
-
-                partita_iva = None
-                cf_pgiuridica = None
-                if(id_token.iv_pg_codfis and id_token.iv_pg_codfis != "NOT_FOUND"):
-                    partita_iva = id_token.iv_pg_codfis
-                if(id_token.iv_pg_piva and id_token.iv_pg_piva != "NOT_FOUND"):
-                    cf_pgiuridica = id_token.iv_pg_piva
-
-                audience = id_token.aud
-                if audience not in cfg.ALLOWED_AUDIENCES.split(','):
-                    logger.error(
-                        f"The audience {audience} is not authorized"
-                    )
-                    raise HTTPException(status.HTTP_401_UNAUTHORIZED)
-
-                if not(partita_iva and cf_pgiuridica) \
-                    and token_type != self.ACCESS_TOKEN_TYPE:
-                    logger.error("Please use an AccessToken")
-                    raise HTTPException(status.HTTP_401_UNAUTHORIZED)
-
-                user_type = None
-                if id_token.iv_tipoutente:
-                    user_type = id_token.iv_tipoutente
-
-                if token_type == self.ACCESS_TOKEN_TYPE:
-                    userinfo = httpx.get(
-                        self.openid_userinfo_url,
-                        headers={
-                            "Authorization": f"{authorization_credentials.scheme} {authorization_credentials.credentials}"  # noqa
-                        }
-                    )
-                    logger.debug(f"Userinfo response code is {userinfo.status_code}")
-                    userinfo.raise_for_status()
-                    codice_fiscale = userinfo.json().get(self.CF_PERSONA_FISICA)
-                    id_token.codice_fiscale = codice_fiscale
-                    logger.info(f"Fiscal code for user {id_token.sub} is {codice_fiscale}")
-                    print(userinfo.json())
-                    if(not(partita_iva and cf_pgiuridica)):
-                        user_type = userinfo.json().get(self.CAMPO_TIPO_UTENTE)
-
-                logger.info(f"User type for user {id_token.sub} is {user_type}")
-                id_token.tipo_utente = user_type
-
-                if partita_iva and len(partita_iva.strip()) == 11:
-                    id_token.partita_iva = partita_iva
-                    return id_token
-                elif cf_pgiuridica and len(cf_pgiuridica.strip()) == 11:
-                    id_token.partita_iva = cf_pgiuridica
-                    return id_token
-                elif id_token.tipo_utente == "cittadino":
-                    return id_token
-                else:
-                    logger.error("The user must have CITTADINO profile");
-                    raise HTTPException(status.HTTP_403_FORBIDDEN)
-            except ValidationError:
-                logger.error(
-                    "The received token cannot be casted to an OpenAMIDToken model"
-                );
-                raise HTTPException(status.HTTP_401_UNAUTHORIZED)
-            except httpx.HTTPStatusError as err:
-                raise HTTPException(err.response.status_code)
+            userinfo = httpx.get(
+                self.openid_userinfo_url,
+                headers={
+                    "Authorization": f"{authorization_credentials.scheme} {authorization_credentials.credentials}"
+                }
+            )
+            user_type = userinfo.json().get(self.CAMPO_TIPO_UTENTE)
+            id_token = OpenAMIDToken(**id_token.dict())
+            id_token.tipo_utente = user_type
+            codice_fiscale = userinfo.json().get(self.CF_PERSONA_FISICA)
+            id_token.codice_fiscale = codice_fiscale
+            if cfg.SISCAT_WHITELIST_DIPENDENTE:
+                if id_token.sub in cfg.SISCAT_WHITELIST_DIPENDENTE.split(","):
+                    id_token.tipo_utente = "dipendente"
+            if id_token.tipo_utente == "dipendente":
+                return id_token
+            else:
+                logger.error("L'utente non ha un profilo DIPENDENTE");
+                raise HTTPException(status.HTTP_403_FORBIDDEN)
 
 api_key_header = APIKeyHeader(name="X-API-Key")
 
