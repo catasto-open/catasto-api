@@ -91,7 +91,6 @@ class CustomAuth(Auth):
 
     async def citizen_authorized(
         self,
-        security_scopes: SecurityScopes,
         authorization_credentials: Optional[HTTPAuthorizationCredentials] = Depends(
             HTTPBearer()
         ),
@@ -112,10 +111,12 @@ class CustomAuth(Auth):
             IDToken validation errors
         """
 
-        id_token = self.required(
-            security_scopes,
-            authorization_credentials
-        )
+        token = authorization_credentials.credentials
+        try:
+            id_token = jwt.decode(token, options={"verify_signature": False})
+        except jwt.exceptions.DecodeError as err:
+            logger.error(f"Token decode error: {err}")
+            raise HTTPException(status.HTTP_401_UNAUTHORIZED)
 
         if id_token is None:
             raise HTTPException(status.HTTP_401_UNAUTHORIZED)
@@ -127,14 +128,14 @@ class CustomAuth(Auth):
                 }
             )
             user_type = userinfo.json().get(self.CAMPO_TIPO_UTENTE)
-            id_token = OpenAMIDToken(**id_token.dict())
+            id_token = OpenAMIDToken(**id_token)
             id_token.tipo_utente = user_type
             codice_fiscale = userinfo.json().get(self.CF_PERSONA_FISICA)
             id_token.codice_fiscale = codice_fiscale
             if cfg.SISCAT_WHITELIST_DIPENDENTE:
                 if id_token.sub in cfg.SISCAT_WHITELIST_DIPENDENTE.split(","):
-                    id_token.tipo_utente = "dipendente"
-            if id_token.tipo_utente == "dipendente":
+                    id_token.tipo_utente = "cittadino"
+            if id_token.tipo_utente == "cittadino":
                 return id_token
             else:
                 logger.error("L'utente non ha un profilo DIPENDENTE");
