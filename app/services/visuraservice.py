@@ -8,7 +8,7 @@ from app.schemas.visura import (
     TitolareItemResult, VisuraItem, DatiCatastaliFabbricatoItemResult, DatiCatastaliTerrenoItemResult, ErediItemResult, UtilitaItemResult
 )
 from app.utils.service_result import ServiceResult
-
+from app.utils.utils import uniq
 
 class VisuraService(AppService):
 
@@ -16,18 +16,25 @@ class VisuraService(AppService):
         return VisuraQuery(self.db).select_codiceimmobile(flagstorico, comune, codiceimmobile, tipoimmobile)
 
     def get_visure_by_codicefiscale(self, comune: str, codicefiscale: str, offset: int, limit: int) -> VisuraItem:
-        persona_result = PersonaFisicaService.get_persona_by_codice_fiscale(self, comune, codicefiscale)
-        if persona_result:
+        persona_result_comma = PersonaFisicaService.get_persona_by_codice_fiscale(self, comune, codicefiscale)
+        if persona_result_comma[0]:
             result = []
-            for persona in persona_result:
-                cs = persona['soggetto']
+            if len(persona_result_comma[0]['soggetto'].split(',')) > 1 :
+                persona_result = list(set(persona_result_comma[0]['soggetto'].split(',')))
+            else:
+                persona_result = [persona_result_comma[0]['soggetto']]
+
+            for cs in persona_result:
                 immobili_results = ImmobileService.get_immobili_by_codice_soggetto(self, False, comune, cs, '')
                 if immobili_results:
                     for immobile in immobili_results:
-                        result.append(immobile['immobile'])
+                        if(immobile['tipoimmobile'].startswith('F')):
+                            result.append([immobile['immobile'],'F'])
+                        else:
+                            result.append([immobile['immobile'],'T'])
             visure = []
-            result = list(set(result))
-            result = sorted(result)
+            # result = list(result)
+            result = list(uniq(sorted(result)))
             length = len(result)
             if(offset > length):
                 return None
@@ -36,7 +43,8 @@ class VisuraService(AppService):
             else:
                 max_value = offset+limit
             for x in range(offset,max_value):
-                visure.append(VisuraQuery(self.db).select_codiceimmobile(False, comune, result[x], ''))
+                visura_x = VisuraQuery(self.db).select_codiceimmobile(False, comune, result[x][0], result[x][1])
+                visure.append(visura_x)
 
             pagina = {}
             pagina['total_count'] = length

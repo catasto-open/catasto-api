@@ -90,6 +90,7 @@ async def visuracittadino(
         codicefiscale = utente.codice_fiscale
 
         if codicefiscale and len(codicefiscale.strip()) == 16:
+            logger.debug(f"Requested codice fiscale {codicefiscale}")
             result = VisuraService(db).get_visure_by_codicefiscale(comune, codicefiscale, offset-1, limit)
         else:
             raise HTTPException(
@@ -157,6 +158,7 @@ async def visuragiuridica(
             logger.info(f"Source client host: {source_ip} is allowed")
 
             if partita_iva and len(partita_iva.strip()) == 11:
+                logger.debug(f"Requested partita iva {partita_iva}")
                 result = VisuraService(db).get_visure_by_partitaiva(comune, partita_iva, offset-1, limit)
             else:
                 raise HTTPException(

@@ -7,3 +7,11 @@ def get_client():
     token = "" # os.environ["JUPYTERHUB_API_TOKEN"]
     headers = {"Authorization": f"Bearer {token}"}
     return httpx.AsyncClient(base_url=base_url, headers=headers)
+
+def uniq(lst):
+    last = object()
+    for item in lst:
+        if item == last:
+            continue
+        yield item
+        last = item
