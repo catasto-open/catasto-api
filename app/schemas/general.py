@@ -12,3 +12,10 @@ class VersionItem(VersionItemResult):
     class Config:
         orm_mode = True
 
+class FoglioParticella(BaseModel):
+  foglio: str
+  particella: str
+
+class CustomQuery(BaseModel):
+  immobili: list[FoglioParticella]
+

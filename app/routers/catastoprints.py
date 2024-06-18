@@ -3,11 +3,12 @@ from app.services.personafisicaservice import PersonaFisicaService
 from app.services.personagiuridicaservice import PersonaGiuridicaService
 from app.services.immobileservice import ImmobileService
 from typing import Optional
-from fastapi import APIRouter, Depends, Query, HTTPException, Security
+from fastapi import APIRouter, Depends, Query, Body, HTTPException, Security
 from app.services.pdfformatter import generate_print_pdf
 from app.services.csvformatter import generate_print_csv
 from app.config.database import get_db
 from app.config.auth import OpenAMIDToken, auth
+from app.schemas.general import CustomQuery, FoglioParticella
 from fastapi.responses import FileResponse, JSONResponse
 from datetime import date
 from enum import Enum
@@ -176,6 +177,65 @@ async def immobili(
         result = ImmobileService(db).get_immobili_by_dati_catastali(flagricercastorica, comune, sezione, foglio, particella, tipoimmobile)
     elif comune and toponimo and indirizzo and numerocivico:
         result = ImmobileService(db).get_immobili_by_indirizzo(flagricercastorica, comune, toponimo, indirizzo, numerocivico, tipoimmobile)
+    else:
+        raise HTTPException(
+                status_code=422, 
+                detail="Dati input non validi")
+
+    data_aggiornamento= PersonaFisicaService(db).get_version()['data_aggiornamento']
+
+    if result:
+        if(format=='pdf'):
+            try:
+                return generate_print_pdf("Immobili", result, username, data_aggiornamento)
+            except BaseException:
+                raise HTTPException(
+                    status_code=500, 
+                    detail="Template non trovato")
+        else:
+            try:
+                return generate_print_csv("Immobili", result, username)
+            except BaseException:
+                raise HTTPException(
+                    status_code=500, 
+                    detail="Errore generazione CSV")
+    else:
+        raise HTTPException(
+            status_code=404, 
+            detail="Nessun risultato trovato")
+
+@router.post("/ricerca/immobili/query", response_class=FileResponse)
+async def immobili(
+    utente: OpenAMIDToken = Security(auth.authorized),
+    comune: Optional[str] = Query(
+        "H501",
+        title="Comune",
+        description="Ricerca per indirizzo e dati catastali",
+        regex="^[a-zA-Z0-9_]*$",
+        max_length=4
+    ),
+    tipoimmobile: Optional[str] = Query(
+        None,
+        title="Tipo Immobile",
+        description="Terreno (T) o Fabbricato (F)",
+        regex="^[a-zA-Z]*$",
+        max_length=1
+    ),
+    q: CustomQuery = Body(),
+    format: Optional[str] = Query(
+        "pdf",
+        title="Formato export",
+        description="Il formato del file output, indicare pdf o csv",
+        max_length=3
+    ),
+    db: get_db = Depends()):
+
+    username = utente.sub
+
+    if q and q.immobili and comune and tipoimmobile:
+        result = []
+        for elem in q.immobili:
+            result = result + ImmobileService(db).get_immobili_by_dati_catastali(False, comune, None, elem.foglio, elem.particella, tipoimmobile)
     else:
         raise HTTPException(
                 status_code=422, 
