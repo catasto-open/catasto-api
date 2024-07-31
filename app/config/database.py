@@ -9,7 +9,7 @@ postgresql://{cfg.SISCAT_DB_USER}:{cfg.SISCAT_DB_PASSWORD}@\
 """
 
 engine = create_engine(
-    SQLALCHEMY_DATABASE_URL
+    SQLALCHEMY_DATABASE_URL, pool_size=10, pool_pre_ping=True
 )
 SessionLocal = sessionmaker(
     autocommit=False,
