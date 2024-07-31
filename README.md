@@ -68,6 +68,8 @@ To run the API locally, you can follow these steps:
 
 1. Create the folder /app/app on your machine and copy the folder /app/templates inside of it. This will create the path /app/app/templates.
 
+2. Install wkhtmltopdf by coping ./wkhtmltopdf/wkhtmltox/bin/ to /usr/bin/
+
 2. From the project folder, activate the [Poetry](https://python-poetry.org/) environment and start the API using the following command:
 
 ```bash
