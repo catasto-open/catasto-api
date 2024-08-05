@@ -17,7 +17,7 @@ class VisuraService(AppService):
 
     def get_visure_by_codicefiscale(self, comune: str, codicefiscale: str, offset: int, limit: int) -> VisuraItem:
         persona_result_comma = PersonaFisicaService.get_persona_by_codice_fiscale(self, comune, codicefiscale)
-        if persona_result_comma[0]:
+        if persona_result_comma and persona_result_comma[0]:
             result = []
             if len(persona_result_comma[0]['soggetto'].split(',')) > 1 :
                 persona_result = list(set(persona_result_comma[0]['soggetto'].split(',')))
